@@ -337,11 +337,254 @@ export const contact = {
   ],
 } as const;
 
+/**
+ * Página de servicio de la calculadora de riesgo de cáncer de pulmón.
+ *
+ * Origen de los datos: las apps Shiny de CAPULMON (`CLIENTES CAPULMON/`), en
+ * particular `modules/risk_ca_pulmon.py`, `static/creditos.md` y
+ * `static/instrucciones.md`. Las cifras y referencias no se redondean ni se
+ * reinterpretan aquí: son las que sustentan el modelo en producción.
+ */
+export const lungCalculator = {
+  slug: "/calculadora-cancer-pulmon",
+  navLabel: "Calculadora CaP",
+  eyebrow: "Producto de investigación",
+  title: "Calculadora de riesgo de cáncer de pulmón",
+  lead: "Estima la probabilidad individual de desarrollar cáncer de pulmón en los próximos 6 años, clasifica el riesgo y devuelve la conducta recomendada. Modelo PLCOm2012noRace extendido con exposición ambiental y ocupacional del contexto colombiano.",
+  metaDescription:
+    "Herramienta de tamizaje basada en el modelo PLCOm2012noRace extendido con riesgo ambiental y ocupacional. Estima la probabilidad de cáncer de pulmón a 6 años y orienta la remisión a programas de detección temprana.",
+
+  /** Cifras de cabecera. Todas verificables contra el código del modelo. */
+  stats: [
+    { value: "6", label: "Años de horizonte de predicción" },
+    { value: "16", label: "Factores de riesgo evaluados" },
+    { value: "3", label: "Niveles de clasificación y conducta" },
+    { value: "5", label: "Implementaciones institucionales" },
+  ],
+
+  /** Qué entrega la herramienta. */
+  estimates: [
+    {
+      icon: "percent",
+      title: "Probabilidad a 6 años",
+      body: "Un valor continuo, no una casilla de elegible/no elegible. El modelo logístico devuelve la probabilidad individual de desarrollar cáncer de pulmón en los próximos seis años.",
+    },
+    {
+      icon: "layers",
+      title: "Clasificación del riesgo",
+      body: "Bajo, moderado o alto, contra umbrales distintos según la persona sea fumadora activa o no. El modelo se construyó en cohortes de fumadores, así que en no fumadores la escala se ajusta.",
+    },
+    {
+      icon: "route",
+      title: "Conducta recomendada",
+      body: "Cada nivel resuelve en una acción concreta: sin seguimiento, evaluación anual con medicina general, o remisión al programa de detección temprana.",
+    },
+    {
+      icon: "database",
+      title: "Registro poblacional",
+      body: "Las implementaciones persisten cada tamizaje, de modo que la institución acumula una base de riesgo poblacional además del resultado individual.",
+    },
+  ],
+
+  /** Qué aporta frente al criterio clásico de tamizaje. */
+  advances: [
+    {
+      title: "De criterio categórico a riesgo continuo",
+      body: "El tamizaje clásico admite o descarta según edad y paquetes-año. Tammemägi et al. (PLOS Medicine, 2014) mostraron sobre las cohortes PLCO y NLST que seleccionar por riesgo estimado detecta más casos que aplicar reglas categóricas.",
+      metric: "PLCO + NLST",
+      metricLabel: "Cohortes de validación",
+    },
+    {
+      title: "Incorpora al no fumador",
+      body: "El criterio por paquetes-año deja fuera a quien nunca fumó. El modelo suma humo de biomasa en interiores y tabaquismo pasivo, dos exposiciones con peso propio en la carga de cáncer de pulmón de la región.",
+      metric: "+2",
+      metricLabel: "Exposiciones ambientales",
+    },
+    {
+      title: "Riesgo ocupacional con latencia",
+      body: "Asbesto, emisiones diésel y pinturas entran sólo si superan diez años de exposición y treinta de latencia. La parametrización se apoya en CAREX Colombia, no en supuestos importados.",
+      metric: "+3",
+      metricLabel: "Exposiciones ocupacionales",
+    },
+    {
+      title: "Alineado con NCCN v2.2024",
+      body: "Quien ya cumple el criterio clásico —50 años o más y 20 paquetes-año o más— se recalifica al alza. La herramienta amplía el tamizaje sin contradecir la guía vigente.",
+      metric: "v2.2024",
+      metricLabel: "Guía NCCN aplicada",
+    },
+  ],
+
+  /** Los 16 factores, agrupados como los ve el modelo. */
+  variableGroups: [
+    {
+      icon: "user",
+      title: "Demográficos y clínicos",
+      items: [
+        "Edad (centrada en 62 años)",
+        "Sexo biológico",
+        "EPOC diagnosticada",
+        "Antecedente personal de cáncer",
+        "Antecedente familiar de cáncer de pulmón",
+      ],
+    },
+    {
+      icon: "cigarette",
+      title: "Tabaquismo",
+      items: [
+        "Condición de fumador activo",
+        "Años fumando",
+        "Cigarrillos por día (relación no lineal)",
+        "Tabaquismo pasivo y sus años",
+      ],
+    },
+    {
+      icon: "wind",
+      title: "Exposición ambiental",
+      items: [
+        "Humo de biomasa en interiores (HAP)",
+        "Años de exposición a biomasa",
+      ],
+    },
+    {
+      icon: "hard-hat",
+      title: "Exposición ocupacional",
+      items: [
+        "Asbesto: años y edad de inicio",
+        "Emisiones diésel: años y edad de inicio",
+        "Pinturas: años y edad de inicio",
+      ],
+    },
+  ],
+
+  /** Titularidad del desarrollo. */
+  authorship: {
+    entity: "ALZAK",
+    lead: "Desarrollo propio",
+    body: "La calculadora es un desarrollo de ALZAK: el modelo, la extensión de riesgo ambiental y ocupacional, la implementación y el tablero de seguimiento se construyeron en casa, por el equipo interdisciplinar de investigación e ingeniería.",
+    email: "info@alzak.com.co",
+    created: "2024",
+    model: "PLCOm2012noRace + riesgo ambiental y ocupacional",
+    ownership: "ALZAK — todos los derechos reservados",
+    stack: "Shiny for Python · MySQL · Posit Connect Cloud",
+  },
+
+  /** El núcleo estadístico. */
+  foundation: {
+    title: "Sobre qué está cimentado",
+    body: "El núcleo es el modelo PLCOm2012, derivado y validado sobre dos de las cohortes de tamizaje más grandes que existen: el Prostate, Lung, Colorectal and Ovarian Cancer Screening Trial (PLCO) y el National Lung Screening Trial (NLST). Sobre esa base, ALZAK añadió los términos de exposición ambiental y ocupacional que el modelo original no contemplaba, calibrados con evidencia y con la guía NCCN vigente.",
+    anchor: {
+      cite: "Tammemägi MC, Katki HA, Hocking WG, et al. Selection criteria for lung-cancer screening.",
+      journal: "New England Journal of Medicine",
+      detail: "2013;368:728-736",
+      doi: "https://doi.org/10.1056/NEJMoa1211776",
+    },
+  },
+
+  /** Bibliografía íntegra de `static/creditos.md`. */
+  references: [
+    {
+      cite: "National Comprehensive Cancer Network. Clinical Practice Guidelines in Oncology for Lung Cancer Screening, Version 2.2024.",
+      topic: "Guía de tamizaje",
+    },
+    {
+      cite: "Tammemägi MC, Church TR, Hocking WG, et al. Evaluation of the Lung Cancer Risks at Which to Screen Ever- and Never-Smokers: Screening Rules Applied to the PLCO and NLST Cohorts. PLOS Medicine. 2014;11(12):e1001764.",
+      topic: "Selección por riesgo",
+      url: "https://doi.org/10.1371/journal.pmed.1001764",
+    },
+    {
+      cite: "Office on Smoking and Health (US). The Health Consequences of Involuntary Exposure to Tobacco Smoke: A Report of the Surgeon General. Cap. 7, Cancer Among Adults from Exposure to Secondhand Smoke. CDC; 2006.",
+      topic: "Tabaquismo pasivo",
+      url: "https://www.ncbi.nlm.nih.gov/books/NBK44330/",
+    },
+    {
+      cite: "Chen LS, Baker T, Hung RJ, et al. Genetic risk can be decreased: Quitting smoking decreases and delays lung cancer for smokers with high and low CHRNA5 risk genotypes — A meta-analysis. EBioMedicine. 2016;11:219-226.",
+      topic: "Cesación y riesgo",
+      url: "https://www.ncbi.nlm.nih.gov/pubmed/27543155",
+    },
+    {
+      cite: "O'Dwyer E, Halpenny DF, Ginsberg MS. Lung cancer screening in patients with previous malignancy: Is this cohort at increased risk for malignancy? European Radiology. 2021;31:458-467.",
+      topic: "Antecedente de cáncer",
+      url: "https://www.ncbi.nlm.nih.gov/pubmed/32728771",
+    },
+    {
+      cite: "Yang IA, Holloway JW, Fong KM. Genetic susceptibility to lung cancer and co-morbidities. Journal of Thoracic Disease. 2013;5(Suppl 5):S454-462.",
+      topic: "EPOC y comorbilidad",
+      url: "https://www.ncbi.nlm.nih.gov/pubmed/24163739",
+    },
+    {
+      cite: "Raspanti GA, Hashibe M, Siwakoti B, et al. Household Air Pollution and Lung Cancer Risk among Never-Smokers in Nepal. Environmental Research. 2016;147:141-145.",
+      topic: "Humo de biomasa",
+      url: "https://doi.org/10.1016/j.envres.2016.02.008",
+    },
+    {
+      cite: "Nielsen LS, Bælum J, Rasmussen J, et al. Occupational asbestos exposure and lung cancer — A systematic review of the literature. Archives of Environmental & Occupational Health. 2014;69(4):191-206.",
+      topic: "Asbesto",
+    },
+    {
+      cite: "Sistema de Información sobre la Exposición Ocupacional a Agentes Carcinógenos para Colombia (CAREX Colombia). Fondo de Riesgos Laborales; 2012.",
+      topic: "Contexto colombiano",
+      url: "https://www.fondoriesgoslaborales.gov.co/documents/publicaciones/guias/Colombia%20CAREX.pdf",
+    },
+    {
+      cite: "Brey C, Consonni D, Sarquis LMM, Miranda FMDa. Lung cancer and occupational exposure: hospital-based case-control study. Revista Gaúcha de Enfermagem. 2022;43:e20210043.",
+      topic: "Exposición ocupacional",
+    },
+    {
+      cite: "Starke KR, Bolm-Audorff U, Reissig D, et al. Dose-response-relationship between occupational exposure to diesel engine emissions and lung cancer risk: A systematic review and meta-analysis. International Journal of Hygiene and Environmental Health. 2024;256:114299.",
+      topic: "Emisiones diésel",
+    },
+  ],
+
+  /**
+   * Instituciones con la herramienta desplegada. Los tres primeros son los que
+   * el tablero de seguimiento reporta recolectando registros; Sanitas y Medisinú
+   * tienen versión de marca propia.
+   */
+  deployments: [
+    {
+      name: "EPS SURA",
+      detail: "Encuesta con autenticación y módulos",
+      logo: "/instituciones/sura.webp",
+    },
+    {
+      name: "Clínica FOSCAL",
+      detail: "Calculadora asistencial",
+      logo: "/instituciones/foscal.webp",
+    },
+    {
+      name: "Biotórax",
+      detail: "Calculadora asistencial",
+      logo: "/instituciones/biotorax.webp",
+    },
+    {
+      name: "Sanitas EPS",
+      detail: "Encuesta pública de tamizaje",
+      logo: "/instituciones/sanitas.webp",
+    },
+    {
+      name: "Medisinú",
+      detail: "Calculadora asistencial",
+      logo: "/instituciones/medisinu.webp",
+    },
+  ],
+
+  /** Aviso obligatorio, tomado literal de `static/instrucciones.md`. */
+  disclaimer:
+    "Esto es solo una herramienta; úsela como una guía. No es una prueba válida para diagnosticar cáncer de pulmón.",
+
+  cta: {
+    title: "¿Quiere implementar el tamizaje por riesgo en su institución?",
+    body: "Adaptamos la calculadora a la identidad y los flujos de su organización, con tablero de seguimiento de la recolección.",
+    label: "Hablemos del proyecto",
+  },
+} as const;
+
 export const navigation = [
   { label: "Inicio", href: "/" },
   { label: "Nosotros", href: "/#nosotros" },
   { label: "Servicios", href: "/#servicios" },
   { label: "Equipo", href: "/#lideres" },
+  { label: "Calculadora CaP", href: "/calculadora-cancer-pulmon" },
   { label: "Calidad", href: "/calidad" },
   { label: "Contáctenos", href: "/#contacto" },
 ] as const;

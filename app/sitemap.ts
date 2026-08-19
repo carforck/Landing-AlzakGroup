@@ -7,6 +7,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: site.url, lastModified, changeFrequency: "monthly", priority: 1 },
     {
+      url: `${site.url}/calculadora-cancer-pulmon`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${site.url}/calidad`,
       lastModified,
       changeFrequency: "yearly",

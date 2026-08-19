@@ -199,6 +199,60 @@ inicial en lugar de ocultarlos.
 No hay degradados difusos ni destellos decorativos: el motivo geométrico dice
 algo sobre esta marca en concreto.
 
+### Página de la calculadora de cáncer de pulmón
+
+`/calculadora-cancer-pulmon` presenta el proyecto CAPULMON como servicio. Es la
+única página con una pieza interactiva, y por eso conviene dejar por escrito qué
+decisiones se tomaron y contra qué regla.
+
+- **El modelo corre en el navegador.** `src/lib/lung-risk.ts` es un port a
+  TypeScript del PLCOm2012noRace + riesgo ambiental y ocupacional de las apps
+  Shiny. Se verificó paridad exacta contra el Python en producción sobre ocho
+  perfiles (Δ < 1e-10). No hay petición de red: son datos de salud y la
+  demostración no persiste nada, a diferencia de la app clínica.
+- **El riesgo se pinta con una rampa secuencial, no con un semáforo.** El riesgo
+  es una magnitud, así que le corresponde un solo tono de claro a oscuro:
+  `menta-400` → `menta-600` → `menta-800`. Se validó con el script de paleta:
+  monotonía de luminosidad correcta y los tres pasos dentro de la banda
+  L 0.43–0.77. Se descartó verde/ámbar/rojo porque introduce tres tintes ajenos
+  a la marca, y el manual es explícito en que menta y gris deben predominar.
+- **El color nunca carga solo con el estado.** `menta-400` sobre superficie clara
+  queda en 1.99:1, por debajo de 3:1. El nivel de riesgo lleva siempre icono y
+  etiqueta de texto, y la cifra grande está siempre visible.
+- **Sin animaciones de entrada por scroll.** La página se rige por la misma regla
+  que el home: todo visible desde el primer pintado. El único movimiento es el
+  del medidor al mover un control —feedback, no decoración— con la curva y las
+  duraciones del sistema.
+- **Fondo de la portada: `DriftingMotif`**, no un degradado. Es la misma decisión
+  documentada en `BrandMotif`.
+- **Lottie en el hero** (`public/riskapplottie/paru-paru.json`, 1200×890, 4 s).
+  Es la única animación decorativa del sitio y se paga con cuidado:
+  `LottieHero` importa el runtime con `import()` dinámico y sólo cuando el
+  contenedor va a entrar en pantalla, usa el build `light` y con
+  `prefers-reduced-motion` no carga nada. El hueco reserva la proporción del
+  lienzo para que no haya salto de layout.
+
+  Dos cosas a saber del archivo: **no es vectorial** —lleva dos PNG incrustados
+  en base64— y **la capa de pulmones no se anima**: sólo se mueve la lupa
+  (posición y escala). El coste es 133 KB gzip del JSON más 45 KB del runtime.
+  El mismo resultado se obtiene con los dos PNG sueltos convertidos a WebP y seis
+  líneas de `@keyframes`, sin runtime y por una fracción del peso; queda anotado
+  por si se quiere recuperar ese presupuesto.
+
+  La ilustración es coral y amarilla, fuera de la paleta corporativa. Se acepta
+  como excepción consciente, igual que el verde de WhatsApp.
+
+- **Botón principal del hero.** `btn-primary` es `gris-500` y sobre el hero
+  `gris-900` se pierde: el botón secundario pesaba más que el principal. Se usa
+  menta con texto `gris-800`, el par que el manual documenta en 7.09:1 —el mismo
+  de `QualityTeaser`, invertido sobre fondo oscuro—.
+
+- **Logos de las cinco instituciones** (`public/instituciones/`). Extraídos de
+  cada app de CAPULMON, blanqueados a alfa, recortados a su contenido y
+  normalizados en altura; los apilados (Biotórax, Medisinú) se exportan al doble
+  de resolución porque su marca denominativa va debajo del símbolo y no al lado.
+  Mismo tratamiento que el muro del home: desaturados en reposo, a color en hover.
+
 ### Movimiento
 
 Un solo presupuesto de movimiento, gastado en feedback antes que en decoración:
@@ -232,6 +286,12 @@ Gestos de interacción, uno por tipo de elemento:
 Áreas táctiles de 48 px de alto como mínimo (por encima del mínimo de 44 px).
 
 ## Pendientes conocidos
+
+- **El README y el código discrepan en iconografía.** Esta sección y la tabla de
+  stack documentan Phosphor Icons, pero `package.json` sólo declara
+  `lucide-react`, `next.config.ts` optimiza ese barrel y todos los componentes
+  importan de ahí. `@phosphor-icons` sigue en `node_modules` sin estar declarado.
+  Hay que decidir cuál manda y alinear documentación o código.
 
 - **Redes sociales**: las URLs en `src/content/site.ts` se infirieron; el sitio
   original sólo tenía iconos sin enlace resuelto. Verificar antes de publicar.
