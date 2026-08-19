@@ -1,0 +1,661 @@
+@import "tailwindcss";
+
+/*
+ * ALZAK Consulting & Research · Sistema de diseño
+ *
+ * Paleta y tipografía tomadas del Manual de Identidad Corporativa
+ * (brand-source/Manual de imagen corporativa.pdf).
+ *
+ *   COLORES CORPORATIVOS: "son los dos principales y los que deben predominar"
+ *     Menta      #5DC3DA   R 93  G 195 B 218   C 61 M 0  Y 14 K 0
+ *     Gris       #54504F   R 84  G 80  B 79    C 59 M 52 Y 50 K 46
+ *
+ *   COLORES SECUNDARIOS
+ *     Verde      #C8DABB   R 200 G 218 B 187   C 27 M 5  Y 33 K 0
+ *     Azul       #6EA1BA   R 110 G 161 B 186   C 60 M 24 Y 20 K 3
+ *
+ *   TIPOGRAFÍA: el manual obliga a Helvetica. En web se resuelve con Inter,
+ *   la grotesca neogótica más cercana en métrica y carácter, con el propio
+ *   stack Helvetica/Arial por delante para quien lo tenga instalado.
+ *
+ * Las escalas 50–900 se derivan de los dos colores corporativos por ajuste de
+ * luminosidad: hacen falta para estados (hover, bordes, fondos suaves) sin
+ * introducir tintes ajenos a la marca. Ningún neutro es un gris puro: todos
+ * llevan la temperatura cálida del #54504F.
+ */
+
+@theme {
+  /* Menta · color corporativo #1 */
+  --color-menta-50: #f0fafc;
+  --color-menta-100: #d9f2f8;
+  --color-menta-200: #b3e6f0;
+  --color-menta-300: #8ad8e7;
+  --color-menta-400: #5dc3da; /* ← oficial */
+  --color-menta-500: #3fa9c2;
+  --color-menta-600: #2f8ba3;
+  --color-menta-700: #2a7085;
+  --color-menta-800: #285c6d;
+  --color-menta-900: #264d5b;
+
+  /* Gris corporativo · color corporativo #2 (cálido, nunca neutro puro) */
+  --color-gris-50: #f7f6f6;
+  --color-gris-100: #eceaea;
+  --color-gris-200: #d8d4d4;
+  --color-gris-300: #b5b1b0;
+  --color-gris-400: #8a8483;
+  --color-gris-500: #54504f; /* ← oficial */
+  --color-gris-600: #474443;
+  --color-gris-700: #3a3736;
+  --color-gris-800: #2b2928;
+  --color-gris-900: #1e1c1c;
+
+  /* Secundarios oficiales */
+  --color-verde: #c8dabb;
+  --color-azul: #6ea1ba;
+
+  /* Superficies semánticas */
+  --color-surface: #ffffff;
+  --color-surface-muted: #f7f6f6;
+  --color-surface-sunken: #eceaea;
+  --color-hairline: #e4e1e0;
+  --color-body: #54504f;
+  --color-heading: #3a3736;
+  --color-ink-soft: #8a8483;
+
+  /* Tipografía */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, var(--font-inter), sans-serif;
+  --font-display: var(--font-inter-tight), var(--font-inter), sans-serif;
+
+  --tracking-tightest: -0.03em;
+
+  /*
+   * Movimiento. Curva de desaceleración natural para llegadas seguras; nunca
+   * rebote ni elástico. Duraciones por consecuencia:
+   *   fast  120ms → feedback inmediato (color, opacidad)
+   *   base  200ms → cambio de estado rutinario (hover, focus)
+   *   slow  380ms → capas, overlays, cambios de layout
+   * La salida siempre más rápida que la entrada.
+   */
+  --ease-out-quint: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 380ms;
+}
+
+/*
+ * Tema claro por defecto: la marca es clara (fondo blanco, menta y gris) y así
+ * se comporta el material corporativo. El tema oscuro NO sigue la preferencia
+ * del sistema; queda disponible añadiendo la clase `.dark` en <html> si algún
+ * día se ofrece un selector.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-surface: #1e1c1c;
+  --color-surface-muted: #2b2928;
+  --color-surface-sunken: #171615;
+  --color-hairline: #3a3736;
+  --color-body: #d8d4d4;
+  --color-heading: #f7f6f6;
+  --color-ink-soft: #b5b1b0;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-heading);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-menta-400);
+    color: var(--color-gris-900);
+  }
+
+  /* Un solo anillo de foco para todo el sitio, siempre visible sobre cualquier fondo */
+  :focus-visible {
+    outline: 2px solid var(--color-menta-500);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  /* Contenedor editorial único: mismo ancho en todas las secciones */
+  .shell {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* Titulares: grotesca estrecha con tracking negativo */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tightest);
+    line-height: 1.04;
+  }
+
+  /*
+   * Etiqueta de sección: caja alta espaciada, como los títulos del manual.
+   * Sin el trazo horizontal que la precedía: con diez secciones en la home el
+   * mismo guion repetido diez veces se leía como ruido, y el tracking de 0.2em
+   * ya separa la etiqueta del titular sin ayuda gráfica.
+   */
+  .eyebrow {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-menta-600);
+  }
+
+  .dark .eyebrow {
+    color: var(--color-menta-300);
+  }
+
+  /*
+   * Botón. El desplazamiento de la flecha comunica "seguir adelante"; el fondo
+   * confirma el hover. Nada de elevación ni escala: el movimiento apunta hacia
+   * donde lleva el enlace.
+   */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* 48px de alto: por encima del mínimo de 44px de área táctil */
+    min-height: 3rem;
+    padding-inline: 1.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      background-color var(--duration-base) var(--ease-out-quint),
+      color var(--duration-base) var(--ease-out-quint),
+      border-color var(--duration-base) var(--ease-out-quint);
+  }
+
+  .btn-arrow {
+    transition: transform var(--duration-base) var(--ease-out-quint);
+  }
+
+  .btn:hover .btn-arrow {
+    transform: translateX(0.25rem);
+  }
+
+  .btn-primary {
+    background-color: var(--color-gris-500);
+    color: #ffffff;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-menta-600);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--color-hairline);
+    color: var(--color-heading);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-menta-400);
+    background-color: var(--color-menta-50);
+    color: var(--color-menta-700);
+  }
+
+  .btn-dark {
+    background-color: var(--color-gris-800);
+    color: #ffffff;
+  }
+
+  .btn-dark:hover {
+    background-color: var(--color-gris-900);
+  }
+
+  /*
+   * Enlace con subrayado que crece desde la izquierda: el trazo confirma el
+   * hover sin mover el texto de sitio.
+   */
+  .link-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out-quint);
+  }
+
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  /*
+   * Fila de servicio. La barra menta que entra desde la izquierda indica
+   * "este es el elemento activo"; es el mismo gesto en toda la retícula.
+   */
+  .service-row {
+    position: relative;
+    transition: background-color var(--duration-base) var(--ease-out-quint);
+  }
+
+  .service-row::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 2px;
+    background-color: var(--color-menta-400);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--duration-base) var(--ease-out-quint);
+  }
+
+  .service-row:hover {
+    background-color: var(--color-menta-50);
+  }
+
+  .service-row:hover::before,
+  .service-row:focus-within::before {
+    transform: scaleY(1);
+  }
+
+  .dark .service-row:hover {
+    background-color: var(--color-surface-sunken);
+  }
+}
+
+/*
+ * Fondo del hero: deriva lenta de la fotografía.
+ *
+ * Único momento de movimiento autoral del sitio. Sólo transform y sólo mientras
+ * la sección está en pantalla (`[data-animate="on"]`, controlado por
+ * IntersectionObserver): un bucle permanente fuera de vista sería gasto de
+ * batería sin que nadie lo vea.
+ */
+@keyframes hero-drift {
+  from {
+    transform: scale(1.04) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(-2%, -1%, 0);
+  }
+}
+
+.hero-photo {
+  animation: hero-drift 24s var(--ease-out-quint) infinite alternate;
+  animation-play-state: paused;
+}
+
+[data-animate="on"] .hero-photo {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+/*
+ * Motivo de marca a la deriva.
+ *
+ * Movimiento de fondo muy lento para las secciones que necesitan algo de vida
+ * sin robar atención. Sólo transform, y en pausa cuando la sección no está en
+ * pantalla, igual que las franjas del hero.
+ */
+@keyframes motif-drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(-4%, 3%, 0) rotate(-3deg);
+  }
+}
+
+.motif-drift {
+  animation: motif-drift 40s var(--ease-out-quint) infinite alternate;
+  animation-play-state: paused;
+}
+
+[data-animate="on"] .motif-drift {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+/*
+ * Deriva continua por columnas de la retícula de servicios.
+ *
+ * Un solo reloj para las tres: misma duración y misma curva, y lo único que
+ * cambia es el sentido. Así la relación se mantiene siempre legible —columnas 1
+ * y 3 bajando mientras la 2 sube, y al revés— en lugar de degenerar en tres
+ * movimientos sin relación, que es lo que pasa si cada columna lleva su propio
+ * tiempo.
+ *
+ * `alternate` + `ease-in-out` da un péndulo: frena al llegar a cada extremo y
+ * arranca de nuevo, sin el tirón de un bucle que salta al reiniciar. La
+ * componente horizontal está en el fotograma del 50 %, de modo que las columnas
+ * exteriores se abren hacia sus lados a mitad de camino y vuelven solas: es el
+ * "en algún momento se mueven horizontal" del encargo, y ocurre siempre en el
+ * mismo punto del recorrido, no al azar.
+ *
+ * Amplitud: 1.25rem vertical y 0.45rem horizontal. El horizontal cabe de sobra
+ * en el padding de 2.5rem que reserva `.shell` en lg, así que no genera scroll.
+ * Se mantiene al subir la velocidad: lo que se pidió es ritmo, y ampliar además
+ * el recorrido es lo que convierte una deriva en un balanceo que marea.
+ *
+ * 5.5 s por medio ciclo, la mitad de los 11 s iniciales. El eje vertical recorre
+ * 40 px, así que van a unos 7 px/s: en los pocos segundos que dura leer una
+ * tarjeta se desplaza unos 20 px, se nota sin cortar la lectura.
+ *
+ * Sólo a partir de 1024px, que es donde la retícula tiene realmente tres
+ * columnas: por debajo, `nth-child(3n)` no coincide con ninguna columna real y
+ * el reparto se leería como tarjetas moviéndose al azar.
+ */
+@keyframes drift-column-left {
+  0% {
+    transform: translate3d(0, -1.25rem, 0);
+  }
+  50% {
+    transform: translate3d(-0.45rem, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 1.25rem, 0);
+  }
+}
+
+@keyframes drift-column-center {
+  0% {
+    transform: translate3d(0, 1.25rem, 0);
+  }
+  50% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -1.25rem, 0);
+  }
+}
+
+@keyframes drift-column-right {
+  0% {
+    transform: translate3d(0, -1.25rem, 0);
+  }
+  50% {
+    transform: translate3d(0.45rem, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 1.25rem, 0);
+  }
+}
+
+@media (min-width: 1024px) {
+  /*
+   * En propiedades largas y no con el atajo `animation:`. El atajo sin nombre
+   * —el nombre lo pone cada regla `nth-child` de abajo— lo descarta el
+   * transformador de CSS de Tailwind, y la duración se quedaba en 0s: las
+   * tarjetas tenían nombre de animación y play-state correctos, y no se movían.
+   */
+  .drift-grid > ul > li {
+    animation-duration: 5.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+    animation-play-state: paused;
+  }
+
+  .drift-grid > ul > li:nth-child(3n + 1) {
+    animation-name: drift-column-left;
+  }
+
+  .drift-grid > ul > li:nth-child(3n + 2) {
+    animation-name: drift-column-center;
+  }
+
+  .drift-grid > ul > li:nth-child(3n + 3) {
+    animation-name: drift-column-right;
+  }
+
+  .drift-grid[data-animate="on"] > ul > li {
+    animation-play-state: running;
+    will-change: transform;
+  }
+}
+
+/*
+ * Cinta continua del mosaico de triángulos del bloque de calidad (MotifField).
+ *
+ * El desplazamiento es de 220px: exactamente el bloque del patrón, 2×2 celdas de
+ * 110px. Al recorrer un bloque completo el fotograma final es idéntico al inicial
+ * y el bucle no tiene costura. Desplazar sólo una celda no serviría: el bloque no
+ * es simétrico a media celda y se vería el salto.
+ *
+ * `linear` a propósito: cualquier curva delataría el punto de reinicio, porque
+ * la cinta frenaría justo donde empalma.
+ *
+ * En propiedades largas y no con el atajo `animation:` — el atajo pierde la
+ * duración al pasar por el transformador de CSS de Tailwind cuando el nombre o la
+ * duración se declaran en otra regla.
+ */
+@keyframes motif-mosaic {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -220px, 0);
+  }
+}
+
+.motif-mosaic {
+  animation-name: motif-mosaic;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-play-state: paused;
+}
+
+[data-animate="on"] .motif-mosaic {
+  animation-play-state: running;
+  will-change: transform;
+}
+
+/*
+ * Dibujado de los iconos de trazo (ver IconDraw).
+ *
+ * Sólo actúa con `data-ready="true"`, es decir cuando IconDraw ya ha normalizado
+ * la longitud de cada subtrazo a 1. Antes de eso el icono se ve completo: sin
+ * esa medida, `dasharray: 1` lo reduciría a una mota.
+ *
+ * El retardo escalonado por subtrazo es lo que hace que el icono se construya en
+ * vez de aparecer: los cinco trazos de una balanza entran uno tras otro. Se cubre
+ * hasta el octavo, que es más de lo que usa cualquiera de estos doce iconos.
+ */
+.icon-draw {
+  display: inline-flex;
+}
+
+.icon-draw[data-ready="true"] svg > * {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.icon-draw[data-ready="true"][data-drawn="true"] svg > * {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 640ms var(--ease-out-quint);
+}
+
+.icon-draw[data-drawn="true"] svg > *:nth-child(2) {
+  transition-delay: 80ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(3) {
+  transition-delay: 160ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(4) {
+  transition-delay: 240ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(5) {
+  transition-delay: 320ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(6) {
+  transition-delay: 400ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(7) {
+  transition-delay: 480ms;
+}
+.icon-draw[data-drawn="true"] svg > *:nth-child(8) {
+  transition-delay: 560ms;
+}
+
+/*
+ * El trazo engorda al pasar por encima de la tarjeta. Va en CSS y no como prop
+ * porque `strokeWidth` es un atributo del SVG: como propiedad heredada se puede
+ * transicionar, y desde la fila se alcanza el icono sin que la tarjeta tenga que
+ * saber nada de él.
+ */
+.service-row .icon-draw svg {
+  stroke-width: 1.5;
+  transition: stroke-width var(--duration-base) var(--ease-out-quint);
+}
+
+.service-row:hover .icon-draw svg,
+.service-row:focus-within .icon-draw svg {
+  stroke-width: 2.25;
+}
+
+/*
+ * Diálogo de previsualización de documentos.
+ *
+ * El `<dialog>` nativo trae margen automático, borde y padding del navegador, y
+ * `max-width`/`max-height` del 100 % menos 6 px de margen. Se reescriben aquí en
+ * lugar de con utilidades para que el `::backdrop` —que no es un elemento y no
+ * acepta clases— viva junto a la caja que oscurece.
+ */
+.doc-dialog {
+  width: min(64rem, 100% - 2rem);
+  height: min(88vh, 60rem);
+  max-width: none;
+  max-height: none;
+  /*
+   * `margin: auto` es lo que centra un <dialog> modal: el navegador lo combina
+   * con `inset: 0`. Hay que reponerlo porque el preflight de Tailwind pone
+   * `margin: 0` en todos los elementos y lo anula. Sin esta línea el diálogo se
+   * queda pegado a la esquina superior izquierda.
+   */
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--color-hairline);
+  border-radius: 0.75rem;
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+
+.doc-dialog::backdrop {
+  background-color: color-mix(in srgb, var(--color-gris-900) 55%, transparent);
+}
+
+/*
+ * Latido de los puntos de la línea de tiempo.
+ *
+ * El retardo lo pone Timeline por hito (`--pulse-delay`), así que el pulso baja
+ * por la línea en cascada en lugar de disparar los cuatro puntos a la vez.
+ */
+@keyframes timeline-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  70%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.timeline-pulse {
+  animation: timeline-pulse 2.8s var(--ease-out-quint) infinite;
+  animation-delay: var(--pulse-delay, 0s);
+}
+
+/*
+ * Reduce motion: se elimina el desplazamiento espacial, pero se conservan los
+ * cambios de color y opacidad, que son los que confirman una acción.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Los fondos quedan fijos en su encuadre inicial, no desaparecen */
+  .hero-photo {
+    animation: none !important;
+    transform: scale(1.04);
+  }
+
+  .motif-drift,
+  .motif-mosaic,
+  .timeline-pulse,
+  .drift-grid > ul > li {
+    animation: none !important;
+  }
+
+  /* Sin latido el halo sobraría: dejaría un disco menta fijo tras cada punto */
+  .timeline-pulse {
+    opacity: 0;
+  }
+
+  /* El relleno de la línea de tiempo sigue al scroll: es movimiento, se retira */
+  .timeline-fill {
+    display: none;
+  }
+
+  /* Las tarjetas de servicios se quedan en su posición de retícula */
+  .drift-grid > ul > li {
+    transform: none !important;
+  }
+
+  /* Los iconos se muestran ya dibujados: se pierde el trazado, no el icono */
+  .icon-draw[data-ready="true"] svg > * {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: background-color, border-color, color, opacity,
+      outline-color, fill, stroke !important;
+    transition-duration: var(--duration-fast) !important;
+  }
+}
