@@ -203,38 +203,62 @@ export const history = {
  * figura como Eco. MSc. Ph.D (c) con el cargo "Líder Modelación Económica".
  * El índice H proviene de la misma lámina.
  */
+/*
+ * Los enlaces a CvLAC y Google Scholar se tomaron de la ficha de líderes del
+ * sitio anterior (alzak.com.co/sobre-nosotros). Cada perfil se abrió para
+ * comprobar que el nombre y la afiliación corresponden: en esta familia hay
+ * nombres muy parecidos y un homónimo habría pasado desapercibido.
+ *
+ * Los índices H se tomaron de Google Scholar el 19 de agosto de 2026 y NO del
+ * deck corporativo, que se había quedado corto en los cuatro casos (decía 99
+ * para Alvis Guzmán frente a los 120 de Scholar). Como cada ficha enlaza ahora
+ * al perfil, una cifra desfasada se notaría a un clic. Conviene revisarlos cada
+ * cierto tiempo: Scholar los recalcula solo.
+ */
 export const leaders = [
   {
     firstName: "Nelson",
     lastName: "Alvis Guzmán",
     credentials: "MD. MSc. Ph.D",
     role: "Director científico",
-    hIndex: 99,
+    hIndex: 120,
     photo: "/team/nelson-alvis-guzman.webp",
+    cvlac:
+      "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000141429",
+    scholar: "https://scholar.google.com/citations?user=PkCYFaYAAAAJ&hl=es",
   },
   {
     firstName: "Josefina",
     lastName: "Zakzuk Sierra",
     credentials: "MD. Ph.D",
     role: "Asesora Clínica y Metodológica",
-    hIndex: 24,
+    hIndex: 27,
     photo: "/team/josefina-zakzuk-sierra.webp",
+    cvlac:
+      "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000615072",
+    scholar: "https://scholar.google.com/citations?user=4lp0wsoAAAAJ&hl=es",
   },
   {
     firstName: "Nelson J.",
     lastName: "Alvis Zakzuk",
     credentials: "Eco. MSc. Ph.D (c)",
     role: "Gerente General",
-    hIndex: 26,
+    hIndex: 37,
     photo: "/team/nelson-jose-alvis-zakzuk.webp",
+    cvlac:
+      "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001348573",
+    scholar: "https://scholar.google.com/citations?user=Paic_C8AAAAJ&hl=es",
   },
   {
     firstName: "María",
     lastName: "Carrasquilla S.",
     credentials: "Eco. MSc. Ph.D (c)",
     role: "Líder Modelación Económica",
-    hIndex: 7,
+    hIndex: 8,
     photo: "/team/maria-carrasquilla-sotomayor.webp",
+    cvlac:
+      "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001348680",
+    scholar: "https://scholar.google.com/citations?user=KmfhC5sAAAAJ&hl=es",
   },
 ] as const;
 
@@ -548,26 +572,36 @@ export const lungCalculator = {
       name: "EPS SURA",
       detail: "Encuesta con autenticación y módulos",
       logo: "/instituciones/sura.webp",
+      logoWidth: 2456,
+      logoHeight: 400,
     },
     {
       name: "Clínica FOSCAL",
       detail: "Calculadora asistencial",
       logo: "/instituciones/foscal.webp",
+      logoWidth: 1160,
+      logoHeight: 400,
     },
     {
       name: "Biotórax",
       detail: "Calculadora asistencial",
       logo: "/instituciones/biotorax.webp",
+      logoWidth: 560,
+      logoHeight: 560,
     },
     {
       name: "Sanitas EPS",
       detail: "Encuesta pública de tamizaje",
       logo: "/instituciones/sanitas.webp",
+      logoWidth: 2254,
+      logoHeight: 400,
     },
     {
       name: "Medisinú",
       detail: "Calculadora asistencial",
       logo: "/instituciones/medisinu.webp",
+      logoWidth: 879,
+      logoHeight: 560,
     },
   ],
 

@@ -132,6 +132,10 @@ con la procedencia de cada dato anotada. Jerarquía de fuentes:
   *Líder Modelación Económica* (la web decía `Eco. Eps. MSc.` / *Investigadora Líder*).
 - **Nuevos bloques.** Promesa de valor, "¿Qué nos hace diferentes?", índices H del
   equipo y las cifras 70+ / 200+ / 13.
+- **Índices H y perfiles.** Cada líder enlaza a su CvLAC de Minciencias y a su
+  Google Scholar, comprobados uno a uno contra nombre y afiliación. Los índices
+  vienen de Scholar (19 de agosto de 2026), no del deck, que se había quedado
+  corto en los cuatro casos.
 - **Claim.** *"Aportamos valor al sistema de salud"* pasa a ser el titular del hero.
 
 Esa estructura centralizada es la que permite añadir la versión en inglés (`/en`)
@@ -223,6 +227,15 @@ decisiones se tomaron y contra qué regla.
   que el home: todo visible desde el primer pintado. El único movimiento es el
   del medidor al mover un control (feedback, no decoración) con la curva y las
   duraciones del sistema.
+- **La demostración va dentro de un marco de ventana** (`BrowserFrame`) sobre
+  fondo `gris-900`. La calculadora es software, no una ilustración, y encuadrarla
+  así lo dice sin explicarlo. La barra **no lleva una dirección web**: inventar
+  una URL daría a entender que la herramienta está publicada en abierto, y no lo
+  está, así que identifica el modelo que corre dentro. Los tres puntos van en
+  gris neutro y el menta queda para el indicador de ejecución. El contenido de la
+  ventana usa `surface-muted` porque la tarjeta de resultado es blanca y sobre
+  blanco perdía su sombra.
+
 - **Fondo de la portada: `DriftingMotif`**, no un degradado. Es la misma decisión
   documentada en `BrandMotif`.
 - **Lottie en el hero** (`public/riskapplottie/paru-paru.json`, 1200×890, 4 s).

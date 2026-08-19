@@ -19,7 +19,12 @@ import { useEffect, useRef, useState } from "react";
  * La segunda copia va oculta a lectores de pantalla: son los mismos logos y
  * anunciarlos dos veces sería ruido.
  */
-type Logo = { readonly name: string; readonly logo: string };
+type Logo = {
+  readonly name: string;
+  readonly logo: string;
+  readonly logoWidth: number;
+  readonly logoHeight: number;
+};
 
 export function LogoMarquee({ items }: { items: readonly Logo[] }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -40,18 +45,22 @@ export function LogoMarquee({ items }: { items: readonly Logo[] }) {
     items.map((it) => (
       <li
         key={`${copia}-${it.name}`}
-        className="flex w-88 shrink-0 items-center justify-center px-10 lg:w-112"
+        // Sin ancho fijo: la celda mide lo que mide su logotipo. Con celdas
+        // iguales, un logotipo cuadrado como el de Biotórax dejaba un hueco
+        // enorme a los lados y la separación entre marcas se veía irregular.
+        className="flex shrink-0 items-center px-9 lg:px-12"
       >
-        <span className="relative block h-28 w-full lg:h-32">
-          <Image
-            src={it.logo}
-            alt={copia === 0 ? it.name : ""}
-            aria-hidden={copia === 1}
-            fill
-            sizes="448px"
-            className="object-contain"
-          />
-        </span>
+        <Image
+          src={it.logo}
+          alt={copia === 0 ? it.name : ""}
+          aria-hidden={copia === 1}
+          width={it.logoWidth}
+          height={it.logoHeight}
+          // Alto común y tope de ancho: los logotipos muy apaisados se reducen
+          // en lugar de aplastar al resto. `object-contain` mantiene la
+          // proporción cuando el tope entra en juego.
+          className="h-20 w-auto max-w-[18rem] object-contain lg:h-28 lg:max-w-[22rem]"
+        />
       </li>
     ));
 

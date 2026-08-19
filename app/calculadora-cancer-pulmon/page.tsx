@@ -12,11 +12,14 @@ import {
   Percent,
   Route,
   ScanLine,
+  Terminal,
   User,
   Wind,
 } from "lucide-react";
 import { CountUp } from "../../src/components/CountUp";
+import { BrowserFrame } from "../../src/components/BrowserFrame";
 import { DriftingMotif } from "../../src/components/DriftingMotif";
+import { MotifField } from "../../src/components/MotifField";
 import { LogoMarquee } from "../../src/components/LogoMarquee";
 import { Marker } from "../../src/components/Marker";
 import { LottieHero } from "../../src/components/LottieHero";
@@ -149,16 +152,46 @@ export default function CalculadoraCancerPulmonPage() {
       {/* ── Demostración ─────────────────────────────────────────── */}
       <section
         id="demostracion"
-        className="scroll-mt-24 border-y border-hairline bg-surface-muted py-20 lg:py-28"
+        className="relative scroll-mt-24 overflow-hidden border-y border-hairline bg-gris-900 py-20 text-white lg:py-28"
       >
-        <div className="shell">
-          <SectionHeader
-            eyebrow="Vista del proyecto"
-            title="El modelo, funcionando"
-            lead="Mueva los controles y vea cómo responde el riesgo. Es el mismo algoritmo que corre en las implementaciones institucionales, con los mismos coeficientes y umbrales."
-          />
+        {/*
+          Fondo oscuro sólo en esta sección: la ventana con el prototipo tiene que
+          despegarse de la página, igual que en una presentación de producto. Se
+          escribe la cabecera a mano en vez de usar SectionHeader porque ese
+          componente lleva los colores del tema claro.
+        */}
+        {/*
+          Antes había un DriftingMotif suelto al fondo de la sección. Como la
+          sección es muy alta, ese rincón casi nunca entraba en pantalla y el
+          IntersectionObserver dejaba la animación en pausa: el fondo estaba
+          quieto. MotifField cubre `inset-0`, así que se activa en cuanto la
+          sección asoma y el tejido rueda de verdad por detrás de la ventana.
+        */}
+        <MotifField className="opacity-[0.55]" />
+
+        <div className="shell relative">
+          <div className="max-w-2xl">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3.5 py-1.5 text-[0.68rem] font-semibold tracking-[0.18em] text-menta-300 uppercase">
+              <Terminal className="size-3.5" strokeWidth={2.5} />
+              Vista del proyecto
+            </p>
+            <h2 className="display mt-6 text-[2rem] text-white sm:text-[2.5rem] lg:text-[3rem]">
+              El modelo, funcionando
+            </h2>
+            <p className="mt-5 leading-relaxed text-gris-300 sm:text-lg">
+              Mueva los controles y vea cómo responde el riesgo. Es el mismo
+              algoritmo que corre en las implementaciones institucionales, con
+              los mismos coeficientes y umbrales.
+            </p>
+          </div>
+
           <div className="mt-14">
-            <RiskDemo />
+            <BrowserFrame
+              label="modelo PLCOm2012noRace + riesgo ambiental y ocupacional"
+              badge="Ejecutándose"
+            >
+              <RiskDemo />
+            </BrowserFrame>
           </div>
         </div>
       </section>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { SectionHeader } from "../SectionHeader";
 import { leaders } from "../../content/site";
 
@@ -17,7 +18,10 @@ export function Leaders() {
 
         <ul className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
           {leaders.map((leader) => (
-            <li key={`${leader.firstName} ${leader.lastName}`} className="group">
+            <li
+              key={`${leader.firstName} ${leader.lastName}`}
+              className="group"
+            >
               <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-surface-sunken">
                 <Image
                   src={leader.photo}
@@ -50,6 +54,29 @@ export function Leaders() {
                 <span className="display text-lg text-menta-600 dark:text-menta-300">
                   {leader.hIndex}
                 </span>
+              </p>
+
+              {/* Perfiles académicos: CvLAC de Minciencias y Google Scholar. */}
+              <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
+                {[
+                  { href: leader.cvlac, texto: "CvLAC" },
+                  { href: leader.scholar, texto: "Scholar" },
+                ].map((l) => (
+                  <a
+                    key={l.texto}
+                    href={l.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${l.texto} de ${leader.firstName} ${leader.lastName}`}
+                    className="group/link inline-flex items-center gap-1 text-xs font-medium text-ink-soft transition-colors duration-200 hover:text-menta-600 dark:hover:text-menta-300"
+                  >
+                    <span className="link-underline">{l.texto}</span>
+                    <ArrowUpRight
+                      className="size-3 opacity-50 transition-transform duration-200 group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5"
+                      strokeWidth={2.5}
+                    />
+                  </a>
+                ))}
               </p>
             </li>
           ))}

@@ -111,6 +111,35 @@ export function RiskDemo() {
   const cortes = v.fumador ? { mod: 10, alto: 20 } : { mod: 26.5, alto: 53 };
   const pa = v.fumador ? packYear(v.nCigarrillosDia, v.fumadorYear) : 0;
 
+  /*
+   * Curva de riesgo por edad para ESTE perfil: se recalcula el modelo de 50 a 80
+   * años dejando el resto de respuestas como están. Rellena el hueco que quedaba
+   * bajo el medidor con algo que informa en vez de decorar, y responde a la
+   * pregunta que todo el mundo se hace al ver un porcentaje: ¿y cómo evoluciona?
+   *
+   * Se recorre de dos en dos años: 16 puntos bastan para que la curva se lea
+   * suave y evitan recalcular el modelo 31 veces en cada pulsación.
+   */
+  const curva = useMemo(() => {
+    const puntos: { edad: number; prob: number }[] = [];
+    for (let edad = 50; edad <= 80; edad += 2) {
+      puntos.push({ edad, prob: calcularRiesgoCaPulmon({ ...v, edad }).prob });
+    }
+    return puntos;
+  }, [v]);
+
+  const CW = 300;
+  const CH = 72;
+  const cx = (edad: number) => ((edad - 50) / 30) * CW;
+  const cy = (prob: number) => CH - prob * CH;
+  const linea = curva
+    .map(
+      (pt, i) =>
+        `${i === 0 ? "M" : "L"}${cx(pt.edad).toFixed(1)} ${cy(pt.prob).toFixed(1)}`,
+    )
+    .join(" ");
+  const area = `${linea} L${CW} ${CH} L0 ${CH} Z`;
+
   // Arco de 240°, abierto abajo. R=80 → longitud = 240/360 · 2πr.
   const R = 80;
   const ARCO = (240 / 360) * 2 * Math.PI * R;
@@ -346,6 +375,93 @@ export function RiskDemo() {
               <tono.Icono className="size-4" strokeWidth={2.25} />
               {r.claseRiesgo}
             </span>
+          </div>
+
+          {/*
+            Curva de riesgo por edad. El trazo se redibuja en cada cambio y la
+            transición de `d` no existe en SVG, así que el movimiento lo da el
+            propio recálculo: al arrastrar un control la curva se deforma en
+            vivo. El punto marca la edad seleccionada.
+          */}
+          <div className="px-7 pb-5">
+            <div className="flex items-baseline justify-between">
+              <p className="text-[0.68rem] font-semibold tracking-[0.18em] text-ink-soft uppercase">
+                Riesgo según la edad
+              </p>
+              <p className="text-[0.68rem] text-ink-soft">
+                con este mismo perfil
+              </p>
+            </div>
+
+            <svg
+              viewBox={`0 -4 ${CW} ${CH + 8}`}
+              className="mt-3 w-full"
+              style={{ height: "5.25rem" }}
+              role="img"
+              aria-label={`Curva de riesgo entre los 50 y los 80 años para el perfil actual. A los ${v.edad} años el riesgo es del ${pct.toFixed(1)} por ciento.`}
+            >
+              <defs>
+                <linearGradient id="curva-relleno" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={tono.trazo} stopOpacity="0.22" />
+                  <stop offset="100%" stopColor={tono.trazo} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+
+              {/* Referencias horizontales al 25, 50 y 75 %. */}
+              {[0.25, 0.5, 0.75].map((g) => (
+                <line
+                  key={g}
+                  x1="0"
+                  x2={CW}
+                  y1={cy(g)}
+                  y2={cy(g)}
+                  stroke="currentColor"
+                  className="text-hairline"
+                  strokeWidth="1"
+                  strokeDasharray="2 4"
+                />
+              ))}
+
+              <path d={area} fill="url(#curva-relleno)" />
+              <path
+                d={linea}
+                fill="none"
+                stroke={tono.trazo}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ transition: "stroke 300ms" }}
+              />
+
+              {/* Edad seleccionada. */}
+              <line
+                x1={cx(v.edad)}
+                x2={cx(v.edad)}
+                y1="0"
+                y2={CH}
+                stroke={tono.trazo}
+                strokeWidth="1"
+                strokeOpacity="0.35"
+              />
+              <circle
+                cx={cx(v.edad)}
+                cy={cy(r.prob)}
+                r="4.5"
+                fill={tono.trazo}
+                stroke="var(--color-surface)"
+                strokeWidth="2.5"
+                style={{
+                  transition:
+                    "cx 220ms ease-out, cy 220ms ease-out, fill 300ms",
+                }}
+              />
+            </svg>
+
+            <div className="flex justify-between text-[0.68rem] text-ink-soft tabular-nums">
+              <span>50 años</span>
+              <span className="font-semibold text-heading">{v.edad} años</span>
+              <span>80 años</span>
+            </div>
           </div>
 
           {/* Escala con los cortes vigentes para este perfil. */}
