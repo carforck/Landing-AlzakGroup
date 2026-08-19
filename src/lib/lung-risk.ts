@@ -36,7 +36,7 @@ const B = {
 
 /**
  * El PLCOm2012 pide IMC y nivel educativo. La app los asume en vez de
- * preguntarlos: el IMC sale del promedio ENSIN 2015 para mayores de 50 —por sexo—
+ * preguntarlos: el IMC sale del promedio ENSIN 2015 para mayores de 50, por sexo,
  * y la educación se fija en "básica" (nivel 2 de 6). Cambiarlos aquí cambiaría el
  * resultado respecto de la app clínica.
  */

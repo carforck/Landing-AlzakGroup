@@ -221,7 +221,7 @@ decisiones se tomaron y contra qué regla.
   etiqueta de texto, y la cifra grande está siempre visible.
 - **Sin animaciones de entrada por scroll.** La página se rige por la misma regla
   que el home: todo visible desde el primer pintado. El único movimiento es el
-  del medidor al mover un control —feedback, no decoración— con la curva y las
+  del medidor al mover un control (feedback, no decoración) con la curva y las
   duraciones del sistema.
 - **Fondo de la portada: `DriftingMotif`**, no un degradado. Es la misma decisión
   documentada en `BrandMotif`.
@@ -232,8 +232,8 @@ decisiones se tomaron y contra qué regla.
   `prefers-reduced-motion` no carga nada. El hueco reserva la proporción del
   lienzo para que no haya salto de layout.
 
-  Dos cosas a saber del archivo: **no es vectorial** —lleva dos PNG incrustados
-  en base64— y **la capa de pulmones no se anima**: sólo se mueve la lupa
+  Dos cosas a saber del archivo: **no es vectorial** (lleva dos PNG incrustados
+  en base64) y **la capa de pulmones no se anima**: sólo se mueve la lupa
   (posición y escala). El coste es 133 KB gzip del JSON más 45 KB del runtime.
   El mismo resultado se obtiene con los dos PNG sueltos convertidos a WebP y seis
   líneas de `@keyframes`, sin runtime y por una fracción del peso; queda anotado
@@ -244,8 +244,8 @@ decisiones se tomaron y contra qué regla.
 
 - **Botón principal del hero.** `btn-primary` es `gris-500` y sobre el hero
   `gris-900` se pierde: el botón secundario pesaba más que el principal. Se usa
-  menta con texto `gris-800`, el par que el manual documenta en 7.09:1 —el mismo
-  de `QualityTeaser`, invertido sobre fondo oscuro—.
+  menta con texto `gris-800`, el par que el manual documenta en 7.09:1, el mismo
+  de `QualityTeaser` invertido sobre fondo oscuro.
 
 - **Logos de las cinco instituciones** (`public/instituciones/`). Extraídos de
   cada app de CAPULMON, blanqueados a alfa, recortados a su contenido y

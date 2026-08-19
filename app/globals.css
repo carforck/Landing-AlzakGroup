@@ -659,3 +659,125 @@
     transition-duration: var(--duration-fast) !important;
   }
 }
+
+/*
+ * Cinta infinita de logotipos (LogoMarquee).
+ *
+ * El carril lleva la lista duplicada, así que recorrer -50 % deja la segunda
+ * copia exactamente donde empezó la primera: el bucle no tiene costura. Sólo se
+ * anima `transform`, y el desplazamiento es lineal a propósito. Una curva de
+ * entrada/salida haría que la cinta acelerara y frenara en cada vuelta, que es
+ * justo lo que delata el truco.
+ */
+@keyframes logo-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.logo-marquee-track {
+  animation: logo-marquee 42s linear infinite;
+  animation-play-state: paused;
+}
+
+[data-animate="on"] .logo-marquee-track {
+  animation-play-state: running;
+}
+
+/* Al detenerse a mirar una marca, la cinta se detiene con el visitante. */
+.logo-marquee:hover .logo-marquee-track {
+  animation-play-state: paused;
+}
+
+/*
+ * Difuminado en los extremos: los logotipos no se cortan a hueso contra el
+ * borde de la sección, entran y salen.
+ */
+.logo-marquee {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 6rem,
+    #000 calc(100% - 6rem),
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* La cinta queda quieta en su encuadre inicial, como los demás fondos. */
+  .logo-marquee-track {
+    animation: none !important;
+  }
+}
+
+/*
+ * Resaltador del titular, hecho como trazo de brocha.
+ *
+ * El fondo es un SVG en linea con los bordes ondulados y dos vetas mas claras
+ * dentro, porque una brocha no deja pigmento uniforme. Va como
+ * `background-image` sobre el propio texto y no como caja detras: con
+ * `box-decoration-break: clone` cada renglon recibe su propio trazo, asi que la
+ * frase puede partirse en varias lineas sin que el resaltado cubra los huecos.
+ *
+ * El alto ocupa toda la caja y el relleno inferior es generoso a proposito: con
+ * menos, el trazo cortaba por la mitad las letras con rasgo descendente y la
+ * «g» de «riesgo» quedaba fuera del resaltado.
+ *
+ * El color del texto salta a gris corporativo a mitad del barrido, cuando la
+ * pintura ya cubre las letras. Es obligatorio: sobre menta el blanco se queda en
+ * 2.04:1 e ilegible, mientras que gris-800 llega a 7.09:1. Esta documentado en
+ * QualityTeaser y en el README.
+ *
+ * El barrido se repite al pasar el cursor. Lo relanza el componente Marker
+ * quitando y devolviendo la animacion, porque volver a aplicar el mismo nombre
+ * de animacion no la reinicia por si solo.
+ */
+.marker {
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20400%2076%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20fill%3D%22%235dc3da%22%20d%3D%22M3.5%2015.5%20C58%207%20118%2013.5%20186%209.5%20C254%205.5%20328%2012.5%20396.5%206%20L398%2061%20C342%2070%20268%2061.5%20198%2066.5%20C128%2071.5%2058%2063%202%2068%20Z%22%2F%3E%3Cpath%20fill%3D%22%238ad8e7%22%20opacity%3D%22.55%22%20d%3D%22M14%2022%20C90%2017%20170%2021%20250%2018%20C310%2016%20360%2019%20388%2017%20L388%2024%20C356%2026%20306%2023%20248%2025%20C168%2028%2088%2024%2014%2029%20Z%22%2F%3E%3Cpath%20fill%3D%22%238ad8e7%22%20opacity%3D%22.35%22%20d%3D%22M22%2052%20C104%2049%20182%2053%20262%2050%20C322%2048%20366%2051%20392%2049%20L392%2055%20C360%2057%20314%2054%20258%2056%20C176%2059%20100%2055%2022%2058%20Z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 0% 100%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0.02em 0.18em 0.14em;
+  margin: 0 -0.1em;
+  cursor: default;
+  animation: marker-sweep 820ms cubic-bezier(0.16, 1, 0.3, 1) 520ms both;
+}
+
+@keyframes marker-sweep {
+  0% {
+    background-size: 0% 100%;
+    color: #ffffff;
+  }
+  /* El salto de color ocurre cuando la pintura ya paso por casi todo el texto. */
+  54% {
+    color: #ffffff;
+  }
+  55% {
+    color: var(--color-gris-800);
+  }
+  100% {
+    background-size: 100% 100%;
+    color: var(--color-gris-800);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin barrido: el trazo ya esta puesto y el texto en su color final. */
+  .marker {
+    animation: none;
+    background-size: 100% 100%;
+    color: var(--color-gris-800);
+  }
+}

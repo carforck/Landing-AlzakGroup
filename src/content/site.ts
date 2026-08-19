@@ -350,6 +350,9 @@ export const lungCalculator = {
   navLabel: "Calculadora CaP",
   eyebrow: "Producto de investigación",
   title: "Calculadora de riesgo de cáncer de pulmón",
+  /** El titular se parte para resaltar sólo la segunda mitad. Ver `.marker`. */
+  titleLead: "Calculadora de ",
+  titleHighlight: "riesgo de cáncer de pulmón",
   lead: "Estima la probabilidad individual de desarrollar cáncer de pulmón en los próximos 6 años, clasifica el riesgo y devuelve la conducta recomendada. Modelo PLCOm2012noRace extendido con exposición ambiental y ocupacional del contexto colombiano.",
   metaDescription:
     "Herramienta de tamizaje basada en el modelo PLCOm2012noRace extendido con riesgo ambiental y ocupacional. Estima la probabilidad de cáncer de pulmón a 6 años y orienta la remisión a programas de detección temprana.",
@@ -408,7 +411,7 @@ export const lungCalculator = {
     },
     {
       title: "Alineado con NCCN v2.2024",
-      body: "Quien ya cumple el criterio clásico —50 años o más y 20 paquetes-año o más— se recalifica al alza. La herramienta amplía el tamizaje sin contradecir la guía vigente.",
+      body: "Quien ya cumple el criterio clásico (50 años o más y 20 paquetes-año o más) se recalifica al alza. La herramienta amplía el tamizaje sin contradecir la guía vigente.",
       metric: "v2.2024",
       metricLabel: "Guía NCCN aplicada",
     },
@@ -464,7 +467,7 @@ export const lungCalculator = {
     email: "info@alzak.com.co",
     created: "2024",
     model: "PLCOm2012noRace + riesgo ambiental y ocupacional",
-    ownership: "ALZAK — todos los derechos reservados",
+    ownership: "ALZAK, todos los derechos reservados",
     stack: "Shiny for Python · MySQL · Posit Connect Cloud",
   },
 
@@ -497,7 +500,7 @@ export const lungCalculator = {
       url: "https://www.ncbi.nlm.nih.gov/books/NBK44330/",
     },
     {
-      cite: "Chen LS, Baker T, Hung RJ, et al. Genetic risk can be decreased: Quitting smoking decreases and delays lung cancer for smokers with high and low CHRNA5 risk genotypes — A meta-analysis. EBioMedicine. 2016;11:219-226.",
+      cite: "Chen LS, Baker T, Hung RJ, et al. Genetic risk can be decreased: Quitting smoking decreases and delays lung cancer for smokers with high and low CHRNA5 risk genotypes - A meta-analysis. EBioMedicine. 2016;11:219-226.",
       topic: "Cesación y riesgo",
       url: "https://www.ncbi.nlm.nih.gov/pubmed/27543155",
     },
@@ -517,7 +520,7 @@ export const lungCalculator = {
       url: "https://doi.org/10.1016/j.envres.2016.02.008",
     },
     {
-      cite: "Nielsen LS, Bælum J, Rasmussen J, et al. Occupational asbestos exposure and lung cancer — A systematic review of the literature. Archives of Environmental & Occupational Health. 2014;69(4):191-206.",
+      cite: "Nielsen LS, Bælum J, Rasmussen J, et al. Occupational asbestos exposure and lung cancer - A systematic review of the literature. Archives of Environmental & Occupational Health. 2014;69(4):191-206.",
       topic: "Asbesto",
     },
     {
@@ -567,6 +570,187 @@ export const lungCalculator = {
       logo: "/instituciones/medisinu.webp",
     },
   ],
+
+
+  /**
+   * Cómo se calibró y validó el modelo.
+   *
+   * Las cifras salen de los dos artículos que sustentan el PLCOm2012 y que ya
+   * estaban citados en `creditos.md`; aquí se explicitan porque son las que
+   * responden a "¿por qué creerle a este número?".
+   *
+   *  · Discriminación y calibración: Tammemägi MC, Katki HA, Hocking WG, et al.
+   *    N Engl J Med. 2013;368:728-736.
+   *  · Eficiencia frente al criterio categórico: Tammemägi MC, Church TR,
+   *    Hocking WG, et al. PLOS Med. 2014;11(12):e1001764.
+   *
+   * OJO: el umbral de 0.0151 es el que usa la literatura para decidir a quién
+   * tamizar. NO es el que usa esta calculadora, que clasifica con cortes propios
+   * (0.10/0.20 en fumadores y 0.265/0.53 en no fumadores). No deben mezclarse.
+   */
+  validation: {
+    eyebrow: "Calibración y validación",
+    title: "Por qué se le puede creer al número",
+    lead: "El modelo no se ajustó a ojo: se derivó sobre 80.375 personas del PLCO y se validó contra dos cohortes de tamizaje independientes. Estas son las cifras publicadas.",
+
+    /** Capacidad de ordenar correctamente a quién le va a dar cáncer y a quién no. */
+    discrimination: {
+      title: "Discriminación",
+      body: "Área bajo la curva ROC. Mide si el modelo asigna más riesgo a quien efectivamente desarrolla la enfermedad.",
+      items: [
+        {
+          value: "0,797",
+          ci: "IC 95 % 0,782–0,811",
+          label: "Cohorte de validación PLCO",
+        },
+        {
+          value: "0,701",
+          ci: "IC 95 % 0,689–0,712",
+          label: "Cohorte NLST",
+          note: "Más bajo por diseño: el NLST excluyó a no fumadores y fumadores leves, así que casi todos sus participantes ya eran de alto riesgo y quedaba menos que ordenar.",
+        },
+      ],
+    },
+
+    /** Qué tan cerca queda la probabilidad predicha de la observada. */
+    calibration: {
+      title: "Calibración",
+      body: "Diferencia absoluta entre el riesgo predicho y el observado en los fumadores del brazo de intervención del PLCO.",
+      items: [
+        { value: "0,009", label: "Diferencia mediana" },
+        { value: "0,042", label: "Percentil 90" },
+        { value: "≤ 0,015", label: "En los 5 primeros deciles de riesgo" },
+        { value: "≤ 0,043", label: "En los 9 primeros deciles de riesgo" },
+      ],
+    },
+
+    /**
+     * Comparación cabeza a cabeza contra el criterio categórico del USPSTF
+     * (edad + paquetes-año), sobre 37.327 fumadores del brazo de intervención
+     * del PLCO y con el umbral de riesgo ≥ 0,0151 (percentil 65).
+     */
+    efficiency: {
+      title: "Frente al criterio categórico",
+      body: "Seleccionar por riesgo estimado contra seleccionar por edad y paquetes-año, sobre los mismos 37.327 fumadores del PLCO.",
+      columns: { model: "Selección por riesgo", baseline: "Criterio USPSTF" },
+      rows: [
+        {
+          metric: "Sensibilidad",
+          hint: "De cada 100 cánceres, cuántos alcanza a captar",
+          model: 80.1,
+          modelCi: "76,8–83,0",
+          baseline: 71.2,
+          baselineCi: "67,6–74,6",
+        },
+        {
+          metric: "Especificidad",
+          hint: "De cada 100 sanos, cuántos deja fuera correctamente",
+          model: 66.2,
+          modelCi: "65,7–66,7",
+          baseline: 62.7,
+          baselineCi: "62,2–63,1",
+        },
+        {
+          metric: "Valor predictivo positivo",
+          hint: "De cada 100 seleccionados, cuántos tenían la enfermedad",
+          model: 4.2,
+          modelCi: "3,9–4,6",
+          baseline: 3.4,
+          baselineCi: "3,1–3,7",
+        },
+      ],
+      headline: {
+        left: { value: "8,8 %", label: "menos personas seleccionadas" },
+        right: { value: "12,4 %", label: "más cánceres detectados" },
+        detail:
+          "12.920 seleccionados frente a 14.170, y aun así 542 cánceres detectados frente a 482.",
+      },
+    },
+
+    /**
+     * El hallazgo que justifica la extensión propia: con el modelo original,
+     * ningún no fumador llega al umbral. Ahí es donde entran los términos
+     * ambientales y ocupacionales que añadió ALZAK.
+     */
+    neverSmokers: {
+      title: "El punto ciego que motivó la extensión",
+      finding:
+        "Ninguno de los 65.711 no fumadores del PLCO alcanzó el umbral de riesgo. Los autores concluyen que, con el modelo original, no deberían tamizarse.",
+      response:
+        "Pero el modelo sólo mide tabaco. En Colombia el humo de biomasa en interiores y la exposición ocupacional a asbesto, diésel y pinturas pesan sobre personas que nunca fumaron. Los términos que ALZAK añadió existen precisamente para que esa población deje de ser invisible al tamizaje.",
+    },
+
+    papers: [
+      {
+        role: "Derivación, discriminación y calibración",
+        cite: "Tammemägi MC, Katki HA, Hocking WG, et al. Selection criteria for lung-cancer screening.",
+        journal: "New England Journal of Medicine",
+        detail: "2013;368:728-736",
+        url: "https://doi.org/10.1056/NEJMoa1211776",
+      },
+      {
+        role: "Validación frente al criterio categórico",
+        cite: "Tammemägi MC, Church TR, Hocking WG, et al. Evaluation of the lung cancer risks at which to screen ever- and never-smokers: screening rules applied to the PLCO and NLST cohorts.",
+        journal: "PLOS Medicine",
+        detail: "2014;11(12):e1001764",
+        url: "https://doi.org/10.1371/journal.pmed.1001764",
+      },
+    ],
+  },
+
+
+  /**
+   * Cifras de operación, tomadas del tablero de seguimiento de CAPULMON
+   * (dash-app-capulmon) el 19 de agosto de 2026.
+   *
+   * Los centros van anónimos a propósito: la pagina no necesita decir quien
+   * aporta cuanto, y publicar el reparto por institución sería dar información
+   * que no nos corresponde.
+   *
+   * OJO con los totales: los tamizajes son 2.018, pero la suma por nivel de
+   * riesgo da 2.015. Los tres restantes no tienen clasificación registrada, así
+   * que los porcentajes se calculan sobre 2.015 y la cifra se declara.
+   */
+  operations: {
+    eyebrow: "Operación",
+    title: "Lo que lleva recogido",
+    lead: "La herramienta no es un prototipo: lleva más de dos mil tamizajes aplicados y cada despliegue alimenta un tablero de seguimiento en tiempo real.",
+    asOf: "19 de agosto de 2026",
+
+    stats: [
+      { value: "2.018", label: "Tamizajes aplicados" },
+      { value: "12,7", label: "Promedio diario de registros" },
+      { value: "10", label: "Meses de operación continua" },
+      { value: "5", label: "Centros aportando datos" },
+    ],
+
+    /** Composicion del riesgo sobre los 2.015 tamizajes clasificados. */
+    riskMix: {
+      title: "Cómo se reparte el riesgo",
+      note: "Sobre 2.015 tamizajes clasificados. Los 3 restantes no tienen nivel registrado.",
+      total: 2015,
+      segments: [
+        { label: "Riesgo alto", value: 856, tone: "alto" },
+        { label: "Riesgo moderado", value: 634, tone: "moderado" },
+        { label: "Riesgo bajo", value: 525, tone: "bajo" },
+      ],
+      insight:
+        "Cuatro de cada diez tamizados salen en riesgo alto y entran en ruta de detección temprana. Es poblacion que el criterio por paquetes-año no siempre alcanza.",
+    },
+
+    /** Volumen por centro, ordenado y sin nombres. */
+    byCenter: {
+      title: "Volumen por centro",
+      note: "Centros anonimizados. El reparto es muy desigual porque los despliegues arrancaron en fechas distintas.",
+      items: [
+        { label: "Centro A", value: 1724 },
+        { label: "Centro B", value: 155 },
+        { label: "Centro C", value: 102 },
+        { label: "Centro D", value: 36 },
+        { label: "Centro E", value: 1 },
+      ],
+    },
+  },
 
   /** Aviso obligatorio, tomado literal de `static/instrucciones.md`. */
   disclaimer:

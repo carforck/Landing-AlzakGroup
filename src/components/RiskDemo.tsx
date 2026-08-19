@@ -21,8 +21,8 @@ import { lungCalculator } from "../content/site";
  * Demostración del modelo corriendo en el navegador.
  *
  * Nada de lo que se teclea aquí sale del equipo del visitante: el cálculo es
- * síncrono en el cliente y no hay petición de red. Es deliberado —son datos de
- * salud— y además permite que el resultado se actualice en cada pulsación.
+ * síncrono en el cliente y no hay petición de red. Es deliberado (son datos de
+ * salud) y además permite que el resultado se actualice en cada pulsación.
  *
  * La app clínica sí persiste, pide identidad y añade la pregunta filtro que
  * excluye a los ya diagnosticados. Esto es la vitrina, no el producto.
@@ -60,7 +60,7 @@ const INICIAL: EntradaRiesgo = {
  *
  * No se usa el semáforo verde/ámbar/rojo. El manual de marca es explícito en que
  * menta y gris "deben predominar" y en el sitio no hay ningún color fuera de esa
- * derivación —la única excepción documentada es el verde de WhatsApp—.
+ * derivación; la única excepción documentada es el verde de WhatsApp.
  *
  * Como el color no puede cargar solo con el estado, cada nivel lleva además
  * icono y etiqueta de texto.
@@ -591,7 +591,7 @@ function Ocupacional({
             className={`mt-2 text-[0.68rem] ${cumple ? "font-semibold text-menta-700 dark:text-menta-300" : "text-ink-soft"}`}
           >
             {cumple
-              ? "✓ Cumple dosis y latencia — suma al riesgo"
+              ? "✓ Cumple dosis y latencia, suma al riesgo"
               : `No suma aún · faltan ${anios < 10 ? `${10 - anios} años de exposición` : `${30 - (edad - inicio)} años de latencia`}`}
           </p>
         </div>

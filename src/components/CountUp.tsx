@@ -46,8 +46,19 @@ export function CountUp({ value, className }: CountUpProps) {
     if (!match) return;
 
     const [, digits, suffix] = match;
-    const target = Number(digits.replace(/[.,]/g, ""));
+
+    // Convención española: el punto agrupa millares y la coma separa decimales.
+    // Antes se borraban ambos y se pintaba el entero pelado, así que "2.018"
+    // aparecía como "2018" y "12,7" como "127". Se conserva cuántos decimales
+    // traía el valor publicado y se vuelve a formatear en cada fotograma.
+    const decimales = digits.includes(",") ? digits.split(",")[1].length : 0;
+    const target = Number(digits.replace(/\./g, "").replace(",", "."));
     if (!Number.isFinite(target)) return;
+
+    const formato = new Intl.NumberFormat("es-CO", {
+      minimumFractionDigits: decimales,
+      maximumFractionDigits: decimales,
+    });
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -55,8 +66,8 @@ export function CountUp({ value, className }: CountUpProps) {
       const start = performance.now();
       const step = (now: number) => {
         const t = Math.min((now - start) / DURATION_MS, 1);
-        const current = Math.round(easeOutCubic(t) * target);
-        setShown(`${current}${suffix}`);
+        const current = easeOutCubic(t) * target;
+        setShown(`${formato.format(current)}${suffix}`);
         if (t < 1) frame.current = requestAnimationFrame(step);
       };
       frame.current = requestAnimationFrame(step);

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -18,6 +17,8 @@ import {
 } from "lucide-react";
 import { CountUp } from "../../src/components/CountUp";
 import { DriftingMotif } from "../../src/components/DriftingMotif";
+import { LogoMarquee } from "../../src/components/LogoMarquee";
+import { Marker } from "../../src/components/Marker";
 import { LottieHero } from "../../src/components/LottieHero";
 import { RiskDemo } from "../../src/components/RiskDemo";
 import { SectionHeader } from "../../src/components/SectionHeader";
@@ -46,9 +47,9 @@ export default function CalculadoraCancerPulmonPage() {
       {/* ── Portada ──────────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-hairline bg-gris-900 text-white">
         {/*
-          Aquí había dos degradados radiales difusos. El README los prohíbe —"No
+          Aquí había dos degradados radiales difusos. El README los prohíbe ("No
           hay degradados difusos ni destellos decorativos: el motivo geométrico
-          dice algo sobre esta marca en concreto"— así que se reemplazan por el
+          dice algo sobre esta marca en concreto"), así que se reemplazan por el
           mosaico de triángulos corporativo, que además se pausa fuera de pantalla.
         */}
         <DriftingMotif className="-top-10 right-0 w-64 opacity-[0.18] lg:w-[26rem]" />
@@ -61,7 +62,8 @@ export default function CalculadoraCancerPulmonPage() {
                 {c.eyebrow}
               </p>
               <h1 className="display mt-7 max-w-4xl text-[2.75rem] text-white sm:text-[3.5rem] lg:text-[4rem]">
-                {c.title}
+                {c.titleLead}
+                <Marker>{c.titleHighlight}</Marker>
               </h1>
               <p className="mt-7 max-w-2xl text-lg leading-relaxed text-gris-200">
                 {c.lead}
@@ -70,7 +72,7 @@ export default function CalculadoraCancerPulmonPage() {
                 {/*
                 `btn-primary` es gris-500 y sobre este hero gris-900 se pierde:
                 el secundario pesaba más que el principal. Se usa el par que el
-                manual documenta como legible —menta con gris-800, 7.09:1—, el
+                manual documenta como legible (menta con gris-800, 7.09:1), el
                 mismo de QualityTeaser pero invertido sobre fondo oscuro.
               */}
                 <Link
@@ -326,33 +328,352 @@ export default function CalculadoraCancerPulmonPage() {
             title="Implementado en cinco instituciones"
             lead="Cada despliegue lleva la identidad de la institución y alimenta un tablero de seguimiento de la recolección de registros."
           />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {c.deployments.map((d) => (
-              <div
-                key={d.name}
-                className="flex h-full flex-col rounded-2xl border border-hairline bg-surface p-6"
+          {/*
+            Antes eran cinco tarjetas con nombre y descripción. Ahora sólo los
+            logotipos, en una cinta que corre sin fin: el nombre ya lo dice cada
+            marca, y repetirlo debajo era redundante.
+          */}
+          <div className="mt-12">
+            <LogoMarquee items={c.deployments} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Calibración y validación ─────────────────────────────── */}
+      {/*
+        Las cifras salen de los dos artículos que sustentan el PLCOm2012 y que ya
+        estaban citados en `creditos.md`. Se explicitan aquí porque son las que
+        responden a «¿por qué creerle a este número?».
+
+        La comparación contra el criterio USPSTF es de dos series, así que cada
+        una va con su etiqueta de texto y no sólo con color: menta para el modelo
+        y gris para la referencia.
+      */}
+      <section className="py-20 lg:py-28">
+        <div className="shell">
+          <SectionHeader
+            eyebrow={c.validation.eyebrow}
+            title={c.validation.title}
+            lead={c.validation.lead}
+          />
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-2">
+            {/* Discriminación */}
+            <div className="rounded-2xl border border-hairline bg-surface p-8">
+              <h3 className="font-semibold text-heading">
+                {c.validation.discrimination.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft dark:text-body">
+                {c.validation.discrimination.body}
+              </p>
+              <div className="mt-7 space-y-6">
+                {c.validation.discrimination.items.map((it) => (
+                  <div key={it.label}>
+                    <div className="flex items-baseline gap-3">
+                      <span className="display text-[2rem] leading-none text-menta-600 dark:text-menta-300">
+                        {it.value}
+                      </span>
+                      <span className="text-xs text-ink-soft tabular-nums">
+                        {it.ci}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-sm text-heading">{it.label}</p>
+                    {"note" in it && it.note ? (
+                      <p className="mt-2 text-xs leading-relaxed text-ink-soft">
+                        {it.note}
+                      </p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Calibración */}
+            <div className="rounded-2xl border border-hairline bg-surface p-8">
+              <h3 className="font-semibold text-heading">
+                {c.validation.calibration.title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-ink-soft dark:text-body">
+                {c.validation.calibration.body}
+              </p>
+              <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-6">
+                {c.validation.calibration.items.map((it) => (
+                  <div key={it.label}>
+                    <dt className="display text-[1.75rem] leading-none text-menta-600 dark:text-menta-300">
+                      {it.value}
+                    </dt>
+                    <dd className="mt-2 text-xs leading-snug text-ink-soft">
+                      {it.label}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+
+          {/* Eficiencia frente al criterio categórico */}
+          <div className="mt-6 rounded-2xl border border-hairline bg-surface p-8 lg:p-10">
+            <h3 className="font-semibold text-heading">
+              {c.validation.efficiency.title}
+            </h3>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft dark:text-body">
+              {c.validation.efficiency.body}
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-x-7 gap-y-2 text-xs">
+              <span className="inline-flex items-center gap-2 text-heading">
+                <span
+                  aria-hidden
+                  className="size-2.5 rounded-full bg-menta-600"
+                />
+                {c.validation.efficiency.columns.model}
+              </span>
+              <span className="inline-flex items-center gap-2 text-ink-soft">
+                <span
+                  aria-hidden
+                  className="size-2.5 rounded-full bg-gris-300 dark:bg-gris-600"
+                />
+                {c.validation.efficiency.columns.baseline}
+              </span>
+            </div>
+
+            <ul className="mt-8 space-y-8">
+              {c.validation.efficiency.rows.map((r) => (
+                <li key={r.metric}>
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+                    <span className="font-medium text-heading">{r.metric}</span>
+                    <span className="text-xs text-ink-soft">{r.hint}</span>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    {[
+                      {
+                        v: r.model,
+                        ci: r.modelCi,
+                        tono: "bg-menta-600",
+                        fuerte: true,
+                      },
+                      {
+                        v: r.baseline,
+                        ci: r.baselineCi,
+                        tono: "bg-gris-300 dark:bg-gris-600",
+                        fuerte: false,
+                      },
+                    ].map((b) => (
+                      <div key={b.ci} className="flex items-center gap-3">
+                        <div className="h-3 flex-1 rounded-full bg-surface-sunken dark:bg-gris-800">
+                          <div
+                            className={`h-full rounded-full ${b.tono}`}
+                            style={{ width: `${b.v}%` }}
+                          />
+                        </div>
+                        <span
+                          className={`w-32 shrink-0 text-right text-sm tabular-nums ${
+                            b.fuerte
+                              ? "font-semibold text-heading"
+                              : "text-ink-soft"
+                          }`}
+                        >
+                          {b.v.toFixed(1).replace(".", ",")} %
+                          <span className="ml-1.5 text-[0.68rem] font-normal text-ink-soft">
+                            ({b.ci})
+                          </span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 grid gap-6 border-t border-hairline pt-8 sm:grid-cols-2">
+              {[
+                c.validation.efficiency.headline.left,
+                c.validation.efficiency.headline.right,
+              ].map((h) => (
+                <div key={h.label}>
+                  <p className="display text-[2.25rem] leading-none text-menta-600 dark:text-menta-300">
+                    {h.value}
+                  </p>
+                  <p className="mt-2 text-sm text-heading">{h.label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 text-xs leading-relaxed text-ink-soft">
+              {c.validation.efficiency.headline.detail}
+            </p>
+          </div>
+
+          {/* Punto ciego y respuesta */}
+          <div className="mt-6 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline lg:grid-cols-2">
+            <div className="bg-surface p-8 lg:p-10">
+              <h3 className="font-semibold text-heading">
+                {c.validation.neverSmokers.title}
+              </h3>
+              <p className="mt-4 leading-relaxed text-ink-soft dark:text-body">
+                {c.validation.neverSmokers.finding}
+              </p>
+            </div>
+            <div className="bg-menta-400 p-8 lg:p-10">
+              <p className="text-xs font-semibold tracking-[0.18em] text-gris-800 uppercase">
+                La extensión de ALZAK
+              </p>
+              <p className="mt-4 leading-relaxed text-gris-800">
+                {c.validation.neverSmokers.response}
+              </p>
+            </div>
+          </div>
+
+          {/* Los dos artículos */}
+          <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            {c.validation.papers.map((pa) => (
+              <a
+                key={pa.url}
+                href={pa.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group rounded-2xl border border-hairline p-6 transition-colors duration-200 hover:border-menta-400"
               >
-                {/*
-                  Logos tomados de cada app de CAPULMON, recortados a su contenido
-                  y normalizados a 200 px de alto para que pesen igual en la celda.
-                  Mismo tratamiento que el muro de clientes del home: desaturados
-                  en reposo, a color al pasar el cursor.
-                */}
-                <span className="relative block h-16 w-full">
-                  <Image
-                    src={d.logo}
-                    alt={d.name}
-                    fill
-                    sizes="(min-width: 1024px) 16vw, (min-width: 640px) 30vw, 45vw"
-                    className="object-contain object-left opacity-70 grayscale transition-[opacity,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:opacity-100 hover:grayscale-0"
+                <p className="text-[0.68rem] font-semibold tracking-[0.14em] text-menta-600 uppercase dark:text-menta-300">
+                  {pa.role}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-heading">
+                  {pa.cite}
+                </p>
+                <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-ink-soft">
+                  <cite className="not-italic">{pa.journal}</cite> · {pa.detail}
+                  <ExternalLink
+                    className="size-3 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    strokeWidth={2.5}
                   />
-                </span>
-                <p className="mt-5 font-semibold text-heading">{d.name}</p>
-                <p className="mt-1.5 text-sm leading-snug text-ink-soft">
-                  {d.detail}
+                </p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Operación ────────────────────────────────────────────── */}
+      {/*
+        Barras en HTML, sin librería de gráficos: son dos composiciones de cinco
+        y tres valores, y traerse un runtime entero para eso no se justifica.
+        El riesgo reutiliza la MISMA rampa secuencial del medidor (menta 400,
+        600 y 800), así que un color significa lo mismo en toda la página.
+        Los tramos llevan 2 px de separación para que no se toquen.
+      */}
+      <section className="border-t border-hairline bg-surface-muted py-20 lg:py-28">
+        <div className="shell">
+          <SectionHeader
+            eyebrow={c.operations.eyebrow}
+            title={c.operations.title}
+            lead={c.operations.lead}
+          />
+
+          <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-hairline bg-hairline sm:grid-cols-2 lg:grid-cols-4">
+            {c.operations.stats.map((st) => (
+              <div key={st.label} className="bg-surface px-6 py-7">
+                <CountUp
+                  value={st.value}
+                  className="display block text-[2.25rem] leading-none text-menta-600 dark:text-menta-300"
+                />
+                <p className="mt-3 text-sm leading-snug text-ink-soft">
+                  {st.label}
                 </p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-8 grid gap-8 lg:grid-cols-2">
+            {/* Reparto del riesgo */}
+            <div className="rounded-2xl border border-hairline bg-surface p-8">
+              <h3 className="font-semibold text-heading">
+                {c.operations.riskMix.title}
+              </h3>
+
+              <div className="mt-7 flex h-4 w-full gap-[2px] overflow-hidden">
+                {c.operations.riskMix.segments.map((sg) => (
+                  <span
+                    key={sg.label}
+                    className={
+                      sg.tone === "alto"
+                        ? "bg-menta-800"
+                        : sg.tone === "moderado"
+                          ? "bg-menta-600"
+                          : "bg-menta-400"
+                    }
+                    style={{
+                      width: `${(sg.value / c.operations.riskMix.total) * 100}%`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <ul className="mt-7 space-y-4">
+                {c.operations.riskMix.segments.map((sg) => (
+                  <li key={sg.label} className="flex items-baseline gap-3">
+                    <span
+                      aria-hidden
+                      className={`size-2.5 shrink-0 translate-y-[1px] rounded-full ${
+                        sg.tone === "alto"
+                          ? "bg-menta-800"
+                          : sg.tone === "moderado"
+                            ? "bg-menta-600"
+                            : "bg-menta-400"
+                      }`}
+                    />
+                    <span className="flex-1 text-sm text-body">{sg.label}</span>
+                    <span className="text-sm font-semibold text-heading tabular-nums">
+                      {sg.value.toLocaleString("es-CO")}
+                    </span>
+                    <span className="w-14 text-right text-sm text-ink-soft tabular-nums">
+                      {((sg.value / c.operations.riskMix.total) * 100)
+                        .toFixed(1)
+                        .replace(".", ",")}{" "}
+                      %
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-7 border-t border-hairline pt-6 leading-relaxed text-ink-soft dark:text-body">
+                {c.operations.riskMix.insight}
+              </p>
+              <p className="mt-4 text-xs text-ink-soft">
+                {c.operations.riskMix.note}
+              </p>
+            </div>
+
+            {/* Volumen por centro */}
+            <div className="rounded-2xl border border-hairline bg-surface p-8">
+              <h3 className="font-semibold text-heading">
+                {c.operations.byCenter.title}
+              </h3>
+
+              <ul className="mt-7 space-y-5">
+                {c.operations.byCenter.items.map((it) => (
+                  <li key={it.label}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-sm text-body">{it.label}</span>
+                      <span className="text-sm font-semibold text-heading tabular-nums">
+                        {it.value.toLocaleString("es-CO")}
+                      </span>
+                    </div>
+                    <div className="mt-2 h-2.5 w-full rounded-full bg-surface-sunken dark:bg-gris-800">
+                      <div
+                        className="h-full rounded-full bg-menta-600"
+                        style={{
+                          width: `${Math.max((it.value / c.operations.byCenter.items[0].value) * 100, 0.8)}%`,
+                        }}
+                      />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-7 border-t border-hairline pt-6 text-xs leading-relaxed text-ink-soft">
+                {c.operations.byCenter.note} Datos del tablero de seguimiento al{" "}
+                {c.operations.asOf}.
+              </p>
+            </div>
           </div>
         </div>
       </section>
