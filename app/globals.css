@@ -781,3 +781,231 @@
     color: var(--color-gris-800);
   }
 }
+
+/*
+ * Ilustraciones de los bloques de factores (FactorArt).
+ *
+ * Todo arranca en pausa y sólo corre bajo `[data-animate="on"]`, igual que los
+ * demás bucles del sitio, para no gastar batería animando lo que no se ve.
+ * Se anima sólo `transform`, `opacity` y `stroke-dashoffset`.
+ */
+@keyframes art-pulse {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  55%,
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/*
+ * 200 es la longitud aproximada del trazo de pulso. Si se cambia la `d` del
+ * path en FactorArt.tsx hay que revisar este número: de lo contrario el trazo
+ * aparece cortado o entra de golpe.
+ */
+.art-pulse {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: art-pulse 3.4s var(--ease-out-quint) infinite;
+  animation-play-state: paused;
+}
+
+@keyframes art-smoke {
+  0% {
+    transform: translate3d(0, 6px, 0);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(0, -14px, 0);
+    opacity: 0;
+  }
+}
+
+.art-smoke {
+  opacity: 0;
+  animation: art-smoke 4.2s ease-out infinite;
+  animation-delay: var(--art-delay, 0s);
+  animation-play-state: paused;
+}
+
+@keyframes art-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(2px, -7px, 0);
+  }
+}
+
+.art-float {
+  animation: art-float 5.2s var(--ease-out-quint) infinite;
+  animation-delay: var(--art-delay, 0s);
+  animation-play-state: paused;
+}
+
+[data-animate="on"] .art-pulse,
+[data-animate="on"] .art-smoke,
+[data-animate="on"] .art-float {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Cada pieza se queda quieta y visible, no desaparece. */
+  .art-pulse,
+  .art-smoke,
+  .art-float {
+    animation: none !important;
+  }
+
+  .art-pulse {
+    stroke-dashoffset: 0;
+  }
+
+  .art-smoke {
+    opacity: 0.7;
+  }
+}
+
+/*
+ * Colores de semáforo para la vista de administración.
+ *
+ * EXCEPCIÓN CONSCIENTE al principio de que no hay colores fuera de la
+ * derivación de menta y gris. Se limita a `/admin`, que es una herramienta
+ * interna de operación y no la web pública: el equipo ya lee el tablero de
+ * Shiny con este código de color y cambiárselo le costaría precisión al leer un
+ * dato clínico. En la página pública y en la calculadora sigue mandando la
+ * rampa menta 400/600/800.
+ *
+ * Los tres tonos se eligieron oscuros a propósito para que el texto blanco
+ * encima pase AA: el rojo y el verde de Bootstrap que usa el tablero original
+ * se quedan por debajo con texto blanco a tamaño pequeño.
+ */
+@theme {
+  --color-riesgo-alto: #c0392b;
+  --color-riesgo-moderado: #a85d18;
+  --color-riesgo-bajo: #1e7a4d;
+
+  --color-riesgo-alto-suave: #fdeceb;
+  --color-riesgo-moderado-suave: #fdf0e3;
+  --color-riesgo-bajo-suave: #e7f5ee;
+}
+
+/*
+ * El contenido de administración sigue el ancho de la barra lateral.
+ *
+ * El estado de plegado vive en la barra, que es un componente de cliente, y el
+ * contenido lo pinta un layout de servidor. En vez de subir el estado y
+ * convertir el layout entero en cliente, la barra publica su estado en un
+ * atributo y el contenido reacciona con el selector de hermano general. Sólo
+ * aplica desde `lg`: por debajo la barra es un panel que se superpone.
+ */
+@media (min-width: 64rem) {
+  .admin-contenido {
+    padding-left: 18rem;
+    transition: padding-left 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .admin-sidebar[data-plegado="si"] ~ .admin-contenido {
+    padding-left: 4.75rem;
+  }
+}
+
+/*
+ * Esqueletos de carga de la administración.
+ *
+ * Un barrido de brillo que recorre el bloque. Se anima `transform` sobre un
+ * pseudo-elemento y no `background-position`, que obliga al navegador a
+ * repintar el fondo entero en cada fotograma.
+ */
+@keyframes admin-brillo {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.admin-esqueleto {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface-sunken);
+}
+
+.admin-esqueleto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.55),
+    transparent
+  );
+  animation: admin-brillo 1.4s ease-in-out infinite;
+}
+
+.dark .admin-esqueleto::after {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.07), transparent);
+}
+
+/*
+ * Entrada de las gráficas: el trazo se dibuja de izquierda a derecha una sola
+ * vez, al aparecer. Da la sensación de que el dato se está pintando en ese
+ * momento, en lugar de aparecer de golpe ya hecho.
+ */
+@keyframes admin-trazo {
+  from {
+    stroke-dashoffset: var(--largo, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.admin-linea {
+  stroke-dasharray: var(--largo, 1200);
+  animation: admin-trazo 1100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes admin-area {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.admin-area {
+  animation: admin-area 900ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+}
+
+/* El punto bajo el cursor crece; el resto se mantiene. */
+.admin-punto {
+  transition:
+    r 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    fill 160ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin barrido ni dibujado: todo aparece ya en su estado final. */
+  .admin-esqueleto::after {
+    animation: none;
+  }
+
+  .admin-linea {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .admin-area {
+    animation: none;
+    opacity: 1;
+  }
+}

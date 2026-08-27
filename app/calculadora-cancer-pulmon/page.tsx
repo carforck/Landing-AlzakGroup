@@ -3,22 +3,20 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
-  Cigarette,
   Database,
   ExternalLink,
-  HardHat,
   Layers,
   Mail,
   Percent,
   Route,
   ScanLine,
   Terminal,
-  User,
-  Wind,
 } from "lucide-react";
 import { CountUp } from "../../src/components/CountUp";
 import { BrowserFrame } from "../../src/components/BrowserFrame";
 import { DriftingMotif } from "../../src/components/DriftingMotif";
+import { FactorArt } from "../../src/components/FactorArt";
+import { InViewGate } from "../../src/components/InViewGate";
 import { MotifField } from "../../src/components/MotifField";
 import { LogoMarquee } from "../../src/components/LogoMarquee";
 import { Marker } from "../../src/components/Marker";
@@ -38,10 +36,6 @@ const ICONOS = {
   layers: Layers,
   route: Route,
   database: Database,
-  user: User,
-  cigarette: Cigarette,
-  wind: Wind,
-  "hard-hat": HardHat,
 } as const;
 
 export default function CalculadoraCancerPulmonPage() {
@@ -101,6 +95,7 @@ export default function CalculadoraCancerPulmonPage() {
             */}
             <LottieHero
               src="/riskapplottie/paru-paru.json"
+              ratio="1200 / 890"
               label="Ilustración de unos pulmones examinados con lupa y microscopio"
               className="mx-auto w-full max-w-md lg:max-w-none"
             />
@@ -240,44 +235,55 @@ export default function CalculadoraCancerPulmonPage() {
             title="Los 16 factores que evalúa"
             lead="Cuatro bloques. Los dos últimos son la extensión que ALZAK añadió sobre el PLCOm2012 original."
           />
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/*
+            Dos columnas y tarjeta horizontal: antes eran cuatro columnas con el
+            icono arriba, y a ese ancho no cabe una ilustración al lado. Con dos
+            columnas el dibujo entra a la izquierda y la lista de variables sigue
+            legible sin partir palabras.
+          */}
+          <InViewGate className="mt-14 grid gap-6 lg:grid-cols-2">
             {c.variableGroups.map((g, i) => {
-              const Icono = ICONOS[g.icon as keyof typeof ICONOS];
               const propio = i >= 2;
               return (
                 <div
                   key={g.title}
-                  className={`h-full rounded-2xl border bg-surface p-7 ${
+                  className={`flex h-full gap-6 rounded-2xl border bg-surface p-7 lg:gap-7 lg:p-8 ${
                     propio
                       ? "border-menta-300 dark:border-menta-800"
                       : "border-hairline"
                   }`}
                 >
-                  <Icono className="size-5 text-menta-500" strokeWidth={1.75} />
-                  <h3 className="mt-4 font-semibold text-heading">{g.title}</h3>
-                  {propio ? (
-                    <p className="mt-2 inline-block rounded-full bg-menta-50 px-2.5 py-0.5 text-[0.65rem] font-semibold tracking-wide text-menta-700 uppercase dark:bg-menta-900/30 dark:text-menta-300">
-                      Extensión ALZAK
-                    </p>
-                  ) : null}
-                  <ul className="mt-5 space-y-2.5">
-                    {g.items.map((it) => (
-                      <li
-                        key={it}
-                        className="flex gap-2.5 text-sm leading-snug text-ink-soft dark:text-body"
-                      >
-                        <span
-                          aria-hidden
-                          className="mt-1.5 size-1.5 shrink-0 rounded-full bg-menta-400"
-                        />
-                        {it}
-                      </li>
-                    ))}
-                  </ul>
+                  <FactorArt
+                    name={g.art}
+                    className="size-16 shrink-0 lg:size-20"
+                  />
+
+                  <div className="min-w-0">
+                    <h3 className="font-semibold text-heading">{g.title}</h3>
+                    {propio ? (
+                      <p className="mt-2 inline-block rounded-full bg-menta-50 px-2.5 py-0.5 text-[0.65rem] font-semibold tracking-wide text-menta-700 uppercase dark:bg-menta-900/30 dark:text-menta-300">
+                        Extensión ALZAK
+                      </p>
+                    ) : null}
+                    <ul className="mt-5 space-y-2.5">
+                      {g.items.map((it) => (
+                        <li
+                          key={it}
+                          className="flex gap-2.5 text-sm leading-snug text-ink-soft dark:text-body"
+                        >
+                          <span
+                            aria-hidden
+                            className="mt-1.5 size-1.5 shrink-0 rounded-full bg-menta-400"
+                          />
+                          {it}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               );
             })}
-          </div>
+          </InViewGate>
         </div>
       </section>
 

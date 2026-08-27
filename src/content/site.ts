@@ -444,7 +444,7 @@ export const lungCalculator = {
   /** Los 16 factores, agrupados como los ve el modelo. */
   variableGroups: [
     {
-      icon: "user",
+      art: "clinico",
       title: "Demográficos y clínicos",
       items: [
         "Edad (centrada en 62 años)",
@@ -455,7 +455,7 @@ export const lungCalculator = {
       ],
     },
     {
-      icon: "cigarette",
+      art: "tabaquismo",
       title: "Tabaquismo",
       items: [
         "Condición de fumador activo",
@@ -465,7 +465,7 @@ export const lungCalculator = {
       ],
     },
     {
-      icon: "wind",
+      art: "ambiental",
       title: "Exposición ambiental",
       items: [
         "Humo de biomasa en interiores (HAP)",
@@ -473,7 +473,7 @@ export const lungCalculator = {
       ],
     },
     {
-      icon: "hard-hat",
+      art: "ocupacional",
       title: "Exposición ocupacional",
       items: [
         "Asbesto: años y edad de inicio",
@@ -786,14 +786,88 @@ export const lungCalculator = {
     },
   },
 
-  /** Aviso obligatorio, tomado literal de `static/instrucciones.md`. */
-  disclaimer:
-    "Esto es solo una herramienta; úsela como una guía. No es una prueba válida para diagnosticar cáncer de pulmón.",
+  /**
+   * Aviso obligatorio, tomado literal de `static/instrucciones.md`. Se parte en
+   * dos para poder destacar la segunda frase, que es la que delimita el alcance
+   * clínico; unidas dicen exactamente lo mismo que el original.
+   */
+  disclaimer: {
+    lead: "Esto es solo una herramienta; úsela como una guía.",
+    emphasis: "No es una prueba válida para diagnosticar cáncer de pulmón.",
+  },
 
   cta: {
     title: "¿Quiere implementar el tamizaje por riesgo en su institución?",
     body: "Adaptamos la calculadora a la identidad y los flujos de su organización, con tablero de seguimiento de la recolección.",
     label: "Hablemos del proyecto",
+  },
+} as const;
+
+
+/**
+ * Acceso al aplicativo clínico.
+ *
+ * NO hay selector de institución, y es deliberado. Hoy cada institución entra
+ * por su propia dirección y su base de datos va fijada en el despliegue, así que
+ * nadie ve la lista de clientes. Poner aqui un desplegable de empresas
+ * publicaría esa cartera a cualquiera que abra la página. Cuando el portal
+ * unificado exista, el inquilino debe resolverse desde el host o desde la
+ * identidad del usuario, nunca pidiéndoselo.
+ */
+export const access = {
+  navLabel: "Acceder al aplicativo",
+  href: "/acceso",
+  eyebrow: "Acceso institucional",
+  title: "Ingrese al aplicativo",
+  lead: "Este acceso es para el personal de salud de las instituciones que tienen la calculadora desplegada. Si usted es paciente, su institución le indicará cómo realizar el tamizaje.",
+  fields: {
+    user: { label: "Usuario", placeholder: "Su usuario institucional" },
+    password: { label: "Contraseña", placeholder: "Su contraseña" },
+  },
+  submit: "Ingresar",
+  forgot: "¿Olvidó su contraseña?",
+  forgotHint:
+    "El restablecimiento lo gestiona el administrador de su institución. Escriba a soporte y le indicaremos el procedimiento.",
+  back: "Volver a la calculadora",
+
+  /**
+   * El portal aún no autentica. Se dice de forma explícita en lugar de simular
+   * un ingreso: un formulario que aparenta funcionar y no funciona invita a la
+   * gente a teclear su contraseña real sin que haya nada al otro lado.
+   */
+  notice: {
+    title: "El portal unificado está en implementación",
+    body: "Por ahora cada institución ingresa por el enlace que le fue compartido. Si no lo tiene a mano, escriba a soporte y se lo reenviamos.",
+  },
+
+  /**
+   * Firma de autoría bajo la ilustración.
+   *
+   * El texto sale del aviso que ya llevan las apps de CAPULMON en su pestaña de
+   * créditos: "Copyright © 2024 propiedad de ALZAK Consulting & Research,
+   * Cartagena de Indias, 130001, Colombia. Todos los derechos reservados." Se
+   * mantiene el año 2024 porque es el de creación del desarrollo, no el actual.
+   *
+   * Se usa © y NO ®. El círculo-R afirma que la marca está registrada ante la
+   * autoridad competente; si no lo está, usarlo es una afirmación falsa. En
+   * cuanto haya constancia del registro ante la SIC, se cambia.
+   */
+  credit: {
+    product: "RiskApp Pulmón",
+    line: "Un desarrollo de ALZAK Consulting & Research",
+    copyright: "Copyright © 2024 ALZAK Consulting & Research",
+    place: "Cartagena de Indias, Colombia",
+    rights: "Todos los derechos reservados",
+  },
+
+  /** Aviso de tratamiento de datos. Ley 1581 de 2012. */
+  habeas: {
+    title: "Tratamiento de datos personales",
+    body: "Al ingresar usted acepta el tratamiento de sus datos conforme a la Ley 1581 de 2012 y a nuestra Política de Seguridad y Privacidad de la Información. Los datos clínicos que registre se almacenan en la base de su institución, se usan únicamente para el tamizaje de riesgo y no se comparten con terceros.",
+    rights:
+      "Usted puede conocer, actualizar, rectificar y solicitar la supresión de sus datos, así como revocar la autorización otorgada.",
+    linkLabel: "Política de privacidad",
+    linkHref: "/privacidad",
   },
 } as const;
 

@@ -3,6 +3,8 @@ import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "../src/components/Navigation";
 import { Footer } from "../src/components/Footer";
+import { ChromeGate } from "../src/components/ChromeGate";
+import { CertBadge } from "../src/components/CertBadge";
 import { MotionProvider } from "../src/components/MotionProvider";
 import { site } from "../src/content/site";
 
@@ -72,7 +74,14 @@ export const metadata: Metadata = {
     siteName: site.name,
     title,
     description: site.description,
-    images: [{ url: "/brand/logo-alzak.png", width: 1200, height: 433, alt: site.name }],
+    images: [
+      {
+        url: "/brand/logo-alzak.png",
+        width: 1200,
+        height: 433,
+        alt: site.name,
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -101,9 +110,14 @@ export default function RootLayout({
           Saltar al contenido
         </a>
         <MotionProvider>
-          <Navigation />
+          <ChromeGate>
+            <Navigation />
+          </ChromeGate>
           <main id="contenido">{children}</main>
-          <Footer />
+          <ChromeGate>
+            <Footer />
+          </ChromeGate>
+          <CertBadge />
         </MotionProvider>
       </body>
     </html>

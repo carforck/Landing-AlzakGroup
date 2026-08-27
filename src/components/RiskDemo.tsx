@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import {
-  Info,
   OctagonAlert,
   RotateCcw,
   ShieldCheck,
@@ -512,13 +511,23 @@ export function RiskDemo() {
             </p>
           </div>
 
-          <div className="flex items-start gap-3 border-t border-hairline bg-gris-800 px-7 py-5">
-            <Info
-              className="mt-0.5 size-4 shrink-0 text-menta-300"
-              strokeWidth={2.25}
+          {/*
+            Aviso legal. Va en menta-400 con texto gris-800, el par que el manual
+            documenta en 7.09:1, porque es el contraste mas alto disponible en la
+            paleta y este es el mensaje que no puede pasar desapercibido. Antes
+            iba en gris sobre gris a 12 px y se leia como una nota al pie.
+            La segunda frase va en negrita: es la que delimita el alcance clinico.
+          */}
+          <div className="flex items-start gap-3.5 bg-menta-400 px-7 py-5">
+            <TriangleAlert
+              className="mt-0.5 size-5 shrink-0 text-gris-800"
+              strokeWidth={2.5}
             />
-            <p className="text-xs leading-relaxed text-gris-200">
-              {lungCalculator.disclaimer}
+            <p className="text-sm leading-relaxed text-gris-800">
+              {lungCalculator.disclaimer.lead}{" "}
+              <strong className="font-bold">
+                {lungCalculator.disclaimer.emphasis}
+              </strong>
             </p>
           </div>
         </div>

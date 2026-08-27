@@ -23,11 +23,19 @@ export function LottieHero({
   src,
   className = "",
   label,
+  ratio,
 }: {
   src: string;
   className?: string;
   /** Texto alternativo: la animación es decorativa si se omite. */
   label?: string;
+  /**
+   * Proporción del lienzo del archivo, `ancho / alto`. Se reserva antes de que
+   * la animación cargue para que no haya salto de layout. Antes estaba fija en
+   * la del Lottie de los pulmones, así que cualquier otro archivo heredaba una
+   * proporción que no era la suya y quedaba descuadrado.
+   */
+  ratio: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [fallo, setFallo] = useState(false);
@@ -80,8 +88,7 @@ export function LottieHero({
       role={label ? "img" : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
-      // 1200×890 es el lienzo del archivo: reservar la proporción evita el salto.
-      style={{ aspectRatio: "1200 / 890" }}
+      style={{ aspectRatio: ratio }}
     />
   );
 }

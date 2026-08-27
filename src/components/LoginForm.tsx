@@ -1,0 +1,179 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+import { Eye, EyeOff, Info, LockKeyhole, UserRound } from "lucide-react";
+import { access, brand, site } from "../content/site";
+
+/**
+ * Formulario de acceso al aplicativo.
+ *
+ * Tres decisiones que conviene no revertir sin pensarlo:
+ *
+ *  1. NO hay selector de institución. Hoy cada institución entra por su propia
+ *     dirección y su base va fijada en el despliegue, así que nadie ve la lista
+ *     de clientes. Un desplegable de empresas publicaría esa cartera entera.
+ *  2. El formulario NO autentica todavía y lo dice. Aparentar un ingreso que no
+ *     existe invita a teclear una contraseña real sin que haya nada al otro
+ *     lado, y esa contraseña acabaría en el historial del navegador y en los
+ *     gestores de claves.
+ *  3. Nada se envía por red. El `submit` sólo cambia estado local.
+ */
+export function LoginForm() {
+  const [usuario, setUsuario] = useState("");
+  const [clave, setClave] = useState("");
+  const [verClave, setVerClave] = useState(false);
+  const [aviso, setAviso] = useState(false);
+  const [olvido, setOlvido] = useState(false);
+
+  return (
+    <div className="w-full max-w-md">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setAviso(true);
+        }}
+        className="rounded-2xl border border-hairline bg-surface p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-24px_rgba(0,0,0,0.25)] lg:p-8"
+      >
+        {/*
+          El logotipo va dentro de la tarjeta, no encima: en una pantalla de
+          ingreso la marca tiene que estar en la misma superficie donde se teclea
+          la contraseña. Es lo que confirma al visitante que está en el sitio
+          correcto y no en una copia.
+        */}
+        <Image
+          src={brand.logo.color}
+          alt={site.name}
+          width={brand.logo.aspect.width}
+          height={brand.logo.aspect.height}
+          priority
+          className="h-9 w-auto dark:hidden"
+        />
+        <Image
+          src={brand.logo.white}
+          alt={site.name}
+          width={brand.logo.aspect.width}
+          height={brand.logo.aspect.height}
+          priority
+          className="hidden h-9 w-auto dark:block"
+        />
+
+        <p className="eyebrow mt-6">{access.eyebrow}</p>
+        <h1 className="display mt-4 text-[1.75rem] sm:text-[2rem]">
+          {access.title}
+        </h1>
+        <p className="mt-4 text-sm leading-relaxed text-ink-soft dark:text-body">
+          {access.lead}
+        </p>
+
+        <div className="mt-6 space-y-4">
+          <label className="block">
+            <span className="text-sm font-medium text-heading">
+              {access.fields.user.label}
+            </span>
+            <div className="relative mt-2">
+              <UserRound
+                className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-soft"
+                strokeWidth={2}
+              />
+              <input
+                type="text"
+                autoComplete="username"
+                required
+                value={usuario}
+                onChange={(e) => setUsuario(e.target.value)}
+                placeholder={access.fields.user.placeholder}
+                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-4 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
+              />
+            </div>
+          </label>
+
+          <label className="block">
+            <span className="text-sm font-medium text-heading">
+              {access.fields.password.label}
+            </span>
+            <div className="relative mt-2">
+              <LockKeyhole
+                className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-ink-soft"
+                strokeWidth={2}
+              />
+              <input
+                type={verClave ? "text" : "password"}
+                autoComplete="current-password"
+                required
+                value={clave}
+                onChange={(e) => setClave(e.target.value)}
+                placeholder={access.fields.password.placeholder}
+                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-12 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
+              />
+              {/*
+                El botón queda fuera del orden de tabulación con tabIndex -1: al
+                pasar de la contraseña al botón de ingresar, nadie espera un salto
+                intermedio que además revela la clave en pantalla.
+              */}
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => setVerClave((v) => !v)}
+                aria-label={
+                  verClave ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
+                aria-pressed={verClave}
+                className="absolute top-1/2 right-2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-ink-soft transition-colors duration-200 hover:text-menta-600 dark:hover:text-menta-300"
+              >
+                {verClave ? (
+                  <EyeOff className="size-4" strokeWidth={2} />
+                ) : (
+                  <Eye className="size-4" strokeWidth={2} />
+                )}
+              </button>
+            </div>
+          </label>
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setOlvido((v) => !v)}
+            aria-expanded={olvido}
+            className="text-sm text-ink-soft transition-colors duration-200 hover:text-menta-600 dark:hover:text-menta-300"
+          >
+            <span className="link-underline">{access.forgot}</span>
+          </button>
+        </div>
+        {olvido ? (
+          <p className="mt-3 rounded-xl bg-surface-muted p-4 text-xs leading-relaxed text-ink-soft dark:text-body">
+            {access.forgotHint}
+          </p>
+        ) : null}
+
+        <button
+          type="submit"
+          className="btn mt-6 h-12 w-full justify-center bg-gris-500 text-white hover:bg-menta-600"
+        >
+          {access.submit}
+        </button>
+
+        {aviso ? (
+          <div
+            role="status"
+            className="mt-5 flex items-start gap-3 rounded-xl border border-menta-200 bg-menta-50 p-4 dark:border-menta-800 dark:bg-menta-900/25"
+          >
+            <Info
+              className="mt-0.5 size-4 shrink-0 text-menta-600 dark:text-menta-300"
+              strokeWidth={2.25}
+            />
+            <div>
+              <p className="text-sm font-semibold text-heading">
+                {access.notice.title}
+              </p>
+              <p className="mt-1.5 text-xs leading-relaxed text-ink-soft dark:text-body">
+                {access.notice.body}
+              </p>
+            </div>
+          </div>
+        ) : null}
+      </form>
+    </div>
+  );
+}

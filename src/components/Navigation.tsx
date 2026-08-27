@@ -2,13 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArrowUpRight, Menu, X } from "lucide-react";
-import { brand, navigation, site } from "../content/site";
+import { ArrowUpRight, LogIn, Menu, X } from "lucide-react";
+import { access, brand, navigation, site } from "../content/site";
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+
+  /*
+   * El acceso al aplicativo sólo aparece en la página de la calculadora y en la
+   * propia pantalla de ingreso. En la home corporativa confundiría: la mayoría
+   * de visitantes no son personal clínico de una institución con despliegue.
+   */
+  const mostrarAcceso =
+    pathname === "/calculadora-cancer-pulmon" || pathname === access.href;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -36,7 +46,11 @@ export function Navigation() {
       }`}
     >
       <div className="shell flex h-20 items-center justify-between gap-6">
-        <Link href="/" className="shrink-0" aria-label={`${site.name} · Inicio`}>
+        <Link
+          href="/"
+          className="shrink-0"
+          aria-label={`${site.name} · Inicio`}
+        >
           <Image
             src={brand.logo.color}
             alt={site.name}
@@ -55,24 +69,44 @@ export function Navigation() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegación principal">
+        <nav
+          className="hidden items-center gap-7 lg:flex"
+          aria-label="Navegación principal"
+        >
           {navigation.slice(0, -1).map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              target={"external" in item && item.external ? "_blank" : undefined}
-              rel={"external" in item && item.external ? "noreferrer" : undefined}
+              target={
+                "external" in item && item.external ? "_blank" : undefined
+              }
+              rel={
+                "external" in item && item.external ? "noreferrer" : undefined
+              }
               className="group inline-flex items-center gap-1 text-sm text-body transition-colors duration-200 hover:text-menta-600 dark:hover:text-menta-300"
             >
               <span className="link-underline">{item.label}</span>
               {"external" in item && item.external ? (
-                <ArrowUpRight className="size-3.5 opacity-50 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
+                <ArrowUpRight
+                  className="size-3.5 opacity-50 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  strokeWidth={2.5}
+                />
               ) : null}
             </Link>
           ))}
         </nav>
 
         <div className="flex items-center gap-3">
+          {mostrarAcceso ? (
+            <Link
+              href={access.href}
+              className="hidden items-center gap-2 rounded-full border border-menta-400 px-5 py-2.5 text-sm font-medium text-menta-600 transition-colors duration-200 hover:bg-menta-400 hover:text-gris-800 lg:inline-flex dark:text-menta-300"
+            >
+              <LogIn className="size-4" strokeWidth={2.25} />
+              {access.navLabel}
+            </Link>
+          ) : null}
+
           <Link
             href="#contacto"
             className="btn btn-primary hidden lg:inline-flex"
@@ -94,20 +128,43 @@ export function Navigation() {
       </div>
 
       {open ? (
-        <div id="menu-movil" className="border-t border-hairline bg-surface lg:hidden">
-          <nav className="shell flex flex-col py-4" aria-label="Navegación principal móvil">
+        <div
+          id="menu-movil"
+          className="border-t border-hairline bg-surface lg:hidden"
+        >
+          <nav
+            className="shell flex flex-col py-4"
+            aria-label="Navegación principal móvil"
+          >
+            {mostrarAcceso ? (
+              <Link
+                href={access.href}
+                onClick={() => setOpen(false)}
+                className="mb-2 flex items-center justify-between rounded-xl bg-menta-400 px-4 py-4 text-lg font-medium text-gris-800"
+              >
+                {access.navLabel}
+                <LogIn className="size-4" strokeWidth={2.5} />
+              </Link>
+            ) : null}
             {navigation.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                target={"external" in item && item.external ? "_blank" : undefined}
-                rel={"external" in item && item.external ? "noreferrer" : undefined}
+                target={
+                  "external" in item && item.external ? "_blank" : undefined
+                }
+                rel={
+                  "external" in item && item.external ? "noreferrer" : undefined
+                }
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-between border-b border-hairline py-4 text-lg text-heading last:border-b-0"
               >
                 {item.label}
                 {"external" in item && item.external ? (
-                  <ArrowUpRight className="size-4 text-menta-500" strokeWidth={2.5} />
+                  <ArrowUpRight
+                    className="size-4 text-menta-500"
+                    strokeWidth={2.5}
+                  />
                 ) : null}
               </Link>
             ))}
