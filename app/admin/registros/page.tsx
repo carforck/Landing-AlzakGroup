@@ -77,7 +77,13 @@ export default async function RegistrosPage({
               antiguo. Use el selector para quedarse con una sola institución.
             </p>
           </div>
-          <CentroSelector centros={centros} />
+          {/*
+            El selector sólo aparece con conexión configurada: sus opciones
+            llevan los nombres de las cinco instituciones y esta vista aún no
+            tiene autenticación. Sin datos que mostrar, publicar la cartera de
+            clientes no aporta nada y sí filtra.
+          */}
+          {faltan.length ? null : <CentroSelector centros={centros} />}
         </div>
 
         <div className="mt-8">
