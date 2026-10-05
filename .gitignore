@@ -19,3 +19,6 @@ tsconfig.tsbuildinfo
 
 # logs sueltos
 snowflake.log
+
+# Documentos internos de trabajo (propuestas, PDFs). No se publican.
+RECURSOS/

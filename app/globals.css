@@ -661,66 +661,6 @@
 }
 
 /*
- * Cinta infinita de logotipos (LogoMarquee).
- *
- * El carril lleva la lista duplicada, así que recorrer -50 % deja la segunda
- * copia exactamente donde empezó la primera: el bucle no tiene costura. Sólo se
- * anima `transform`, y el desplazamiento es lineal a propósito. Una curva de
- * entrada/salida haría que la cinta acelerara y frenara en cada vuelta, que es
- * justo lo que delata el truco.
- */
-@keyframes logo-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.logo-marquee-track {
-  animation: logo-marquee 42s linear infinite;
-  animation-play-state: paused;
-}
-
-[data-animate="on"] .logo-marquee-track {
-  animation-play-state: running;
-}
-
-/* Al detenerse a mirar una marca, la cinta se detiene con el visitante. */
-.logo-marquee:hover .logo-marquee-track {
-  animation-play-state: paused;
-}
-
-/*
- * Difuminado en los extremos: los logotipos no se cortan a hueso contra el
- * borde de la sección, entran y salen.
- */
-.logo-marquee {
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 6rem,
-    #000 calc(100% - 6rem),
-    transparent
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    #000 6rem,
-    #000 calc(100% - 6rem),
-    transparent
-  );
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* La cinta queda quieta en su encuadre inicial, como los demás fondos. */
-  .logo-marquee-track {
-    animation: none !important;
-  }
-}
-
-/*
  * Resaltador del titular, hecho como trazo de brocha.
  *
  * El fondo es un SVG en linea con los bordes ondulados y dos vetas mas claras
