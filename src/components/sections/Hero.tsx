@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { BrandMotif } from "../BrandMotif";
 import { CountUp } from "../CountUp";
 import { HeroBackdrop } from "../HeroBackdrop";
+import { Presence } from "./Presence";
 import { hero, stats } from "../../content/site";
 
 /**
@@ -71,6 +72,9 @@ export function Hero() {
           ))}
         </dl>
       </section>
+
+      {/* Presencia en el globo, debajo de las cifras, como en cloudflare.com. */}
+      <Presence />
     </>
   );
 }

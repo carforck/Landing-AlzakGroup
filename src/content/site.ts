@@ -60,6 +60,64 @@ export const stats = [
   { value: "ISO 9001:2015", label: "Certificados por Bureau Veritas" },
 ] as const;
 
+/**
+ * Presencia y alcance geográfico. Sale de la lámina 8 de la presentación
+ * institucional «La importancia de ALZAK para el Sistema de Salud en Colombia»
+ * (16 jul 2026): un mapa animado que va revelando, en este mismo orden, la
+ * sede, las ciudades con datos de pacientes, la presencia institucional, los
+ * proyectos internacionales, la colaboración en LATAM y la nueva sede.
+ *
+ * Las coordenadas son las de cada ciudad (capital del departamento cuando la
+ * lámina nombra un departamento: Boyacá → Tunja, Valle del Cauca → Cali).
+ * `fase` ordena la animación del globo.
+ */
+export const presence = {
+  eyebrow: "Presencia y alcance",
+  title: "Diez años generando evidencia desde Cartagena hacia la región",
+  lead: "De la sede principal a seis ciudades con datos de pacientes, presencia institucional en Colombia, proyectos en Centroamérica, colaboración en cuatro países de la región y una nueva sede en São Paulo.",
+  /**
+   * Cifras sobre el globo, de la misma presentación (láminas 2, 6 y 7). Se
+   * eligieron las de alcance; las publicaciones ya están en la tira del hero.
+   * Empiezan por dígito para que CountUp las cuente.
+   */
+  cifras: [
+    { valor: "10", etiqueta: "años generando evidencia científica en salud" },
+    { valor: "176", etiqueta: "proyectos de investigación desarrollados a 2025" },
+    { valor: "50+", etiqueta: "aliados con los que hemos colaborado" },
+    { valor: "18", etiqueta: "ciudades en 9 países, con nueva sede en São Paulo" },
+  ],
+  categorias: [
+    { clave: "sede", etiqueta: "Sede principal" },
+    { clave: "pacientes", etiqueta: "Ciudades con datos de pacientes" },
+    { clave: "institucional", etiqueta: "Presencia institucional en Colombia" },
+    { clave: "internacional", etiqueta: "Proyectos internacionales" },
+    { clave: "latam", etiqueta: "Participación y colaboración LATAM" },
+    { clave: "nueva", etiqueta: "Nueva sede · São Paulo, 2026" },
+  ],
+  lugares: [
+    { nombre: "Cartagena", detalle: "Sede principal", categoria: "sede", lat: 10.391, lon: -75.479, fase: 0 },
+    { nombre: "Barranquilla", detalle: "Datos de pacientes", categoria: "pacientes", lat: 10.964, lon: -74.796, fase: 1 },
+    { nombre: "Santa Marta", detalle: "Datos de pacientes", categoria: "pacientes", lat: 11.24, lon: -74.199, fase: 1 },
+    { nombre: "Riohacha", detalle: "La Guajira · datos de pacientes", categoria: "pacientes", lat: 11.544, lon: -72.907, fase: 1 },
+    { nombre: "Valledupar", detalle: "Datos de pacientes", categoria: "pacientes", lat: 10.463, lon: -73.253, fase: 1 },
+    { nombre: "Cúcuta", detalle: "Datos de pacientes", categoria: "pacientes", lat: 7.894, lon: -72.507, fase: 2 },
+    { nombre: "Medellín", detalle: "Datos de pacientes", categoria: "pacientes", lat: 6.244, lon: -75.581, fase: 2 },
+    { nombre: "Bogotá", detalle: "Presencia institucional", categoria: "institucional", lat: 4.711, lon: -74.072, fase: 3 },
+    { nombre: "Boyacá", detalle: "Presencia institucional", categoria: "institucional", lat: 5.535, lon: -73.367, fase: 3 },
+    { nombre: "Valle del Cauca", detalle: "Presencia institucional", categoria: "institucional", lat: 3.451, lon: -76.532, fase: 3 },
+    { nombre: "Ciudad de Guatemala", detalle: "Proyecto internacional", categoria: "internacional", lat: 14.634, lon: -90.506, fase: 4 },
+    { nombre: "Panamá", detalle: "Proyecto internacional · OPS/CLAP", categoria: "internacional", lat: 8.983, lon: -79.517, fase: 4 },
+    { nombre: "San José", detalle: "Costa Rica · proyecto internacional", categoria: "internacional", lat: 9.928, lon: -84.09, fase: 4 },
+    { nombre: "Ciudad de México", detalle: "Participantes", categoria: "latam", lat: 19.433, lon: -99.133, fase: 5 },
+    { nombre: "Quito", detalle: "Participantes", categoria: "latam", lat: -0.18, lon: -78.467, fase: 5 },
+    { nombre: "Lima", detalle: "Participantes", categoria: "latam", lat: -12.046, lon: -77.043, fase: 5 },
+    { nombre: "Buenos Aires", detalle: "Participantes", categoria: "latam", lat: -34.604, lon: -58.382, fase: 5 },
+    { nombre: "São Paulo", detalle: "Nueva sede · 2026", categoria: "nueva", lat: -23.551, lon: -46.633, fase: 6 },
+  ],
+  /** ISO 3166 numérico de los países con presencia, para resaltarlos en el globo. */
+  paises: ["170", "076", "484", "320", "591", "188", "218", "604", "032"],
+} as const;
+
 export const missionVision = {
   mission: {
     title: "Misión",
@@ -516,59 +574,6 @@ export const lungCalculator = {
       topic: "Emisiones diésel",
     },
   ],
-
-  /**
-   * Cifras de operación, tomadas del tablero de seguimiento de CAPULMON
-   * (dash-app-capulmon) el 19 de agosto de 2026.
-   *
-   * Los centros van anónimos a propósito: la pagina no necesita decir quien
-   * aporta cuanto, y publicar el reparto por institución sería dar información
-   * que no nos corresponde.
-   *
-   * OJO con los totales: los tamizajes son 2.018, pero la suma por nivel de
-   * riesgo da 2.015. Los tres restantes no tienen clasificación registrada, así
-   * que los porcentajes se calculan sobre 2.015 y la cifra se declara.
-   */
-  operations: {
-    eyebrow: "Operación",
-    title: "Lo que lleva recogido",
-    lead: "La herramienta no es un prototipo: lleva más de dos mil tamizajes aplicados y cada despliegue alimenta un tablero de seguimiento en tiempo real.",
-    asOf: "19 de agosto de 2026",
-
-    stats: [
-      { value: "2.018", label: "Tamizajes aplicados" },
-      { value: "12,7", label: "Promedio diario de registros" },
-      { value: "10", label: "Meses de operación continua" },
-      { value: "5", label: "Centros aportando datos" },
-    ],
-
-    /** Composicion del riesgo sobre los 2.015 tamizajes clasificados. */
-    riskMix: {
-      title: "Cómo se reparte el riesgo",
-      note: "Sobre 2.015 tamizajes clasificados. Los 3 restantes no tienen nivel registrado.",
-      total: 2015,
-      segments: [
-        { label: "Riesgo alto", value: 856, tone: "alto" },
-        { label: "Riesgo moderado", value: 634, tone: "moderado" },
-        { label: "Riesgo bajo", value: 525, tone: "bajo" },
-      ],
-      insight:
-        "Cuatro de cada diez tamizados salen en riesgo alto y entran en ruta de detección temprana. Es poblacion que el criterio por paquetes-año no siempre alcanza.",
-    },
-
-    /** Volumen por centro, ordenado y sin nombres. */
-    byCenter: {
-      title: "Volumen por centro",
-      note: "Centros anonimizados. El reparto es muy desigual porque los despliegues arrancaron en fechas distintas.",
-      items: [
-        { label: "Centro A", value: 1724 },
-        { label: "Centro B", value: 155 },
-        { label: "Centro C", value: 102 },
-        { label: "Centro D", value: 36 },
-        { label: "Centro E", value: 1 },
-      ],
-    },
-  },
 
   /**
    * Aviso obligatorio, tomado literal de `static/instrucciones.md`. Se parte en

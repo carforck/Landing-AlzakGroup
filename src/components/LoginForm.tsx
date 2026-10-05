@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import Image from "next/image";
-import { Eye, EyeOff, Info, LockKeyhole, UserRound } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
 import { access, brand, site } from "../content/site";
+import { ingresar, type EstadoIngreso } from "../../app/acceso/actions";
+
+const INICIAL: EstadoIngreso = { error: null, usuario: "" };
 
 /**
  * Formulario de acceso al aplicativo.
@@ -13,26 +16,21 @@ import { access, brand, site } from "../content/site";
  *  1. NO hay selector de institución. Hoy cada institución entra por su propia
  *     dirección y su base va fijada en el despliegue, así que nadie ve la lista
  *     de clientes. Un desplegable de empresas publicaría esa cartera entera.
- *  2. El formulario NO autentica todavía y lo dice. Aparentar un ingreso que no
- *     existe invita a teclear una contraseña real sin que haya nada al otro
- *     lado, y esa contraseña acabaría en el historial del navegador y en los
- *     gestores de claves.
- *  3. Nada se envía por red. El `submit` sólo cambia estado local.
+ *     La institución sale del propio usuario: el servidor lo busca en las
+ *     cinco bases y lleva a cada quien a la vista de la suya.
+ *  2. El error es el mismo exista o no el usuario, para no confirmar cuentas.
+ *  3. La clave viaja sólo en el POST de la acción de servidor; no se guarda en
+ *     estado más allá del campo, y tras un error se vacía.
  */
 export function LoginForm() {
-  const [usuario, setUsuario] = useState("");
-  const [clave, setClave] = useState("");
+  const [estado, enviar, enviando] = useActionState(ingresar, INICIAL);
   const [verClave, setVerClave] = useState(false);
-  const [aviso, setAviso] = useState(false);
   const [olvido, setOlvido] = useState(false);
 
   return (
     <div className="w-full max-w-md">
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          setAviso(true);
-        }}
+        action={enviar}
         className="rounded-2xl border border-hairline bg-surface p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-24px_rgba(0,0,0,0.25)] lg:p-8"
       >
         {/*
@@ -78,10 +76,10 @@ export function LoginForm() {
               />
               <input
                 type="text"
+                name="usuario"
                 autoComplete="username"
                 required
-                value={usuario}
-                onChange={(e) => setUsuario(e.target.value)}
+                defaultValue={estado.usuario}
                 placeholder={access.fields.user.placeholder}
                 className="h-12 w-full rounded-xl border border-hairline bg-surface pr-4 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
               />
@@ -99,10 +97,9 @@ export function LoginForm() {
               />
               <input
                 type={verClave ? "text" : "password"}
+                name="clave"
                 autoComplete="current-password"
                 required
-                value={clave}
-                onChange={(e) => setClave(e.target.value)}
                 placeholder={access.fields.password.placeholder}
                 className="h-12 w-full rounded-xl border border-hairline bg-surface pr-12 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
               />
@@ -147,32 +144,23 @@ export function LoginForm() {
           </p>
         ) : null}
 
-        <button
-          type="submit"
-          className="btn mt-6 h-12 w-full justify-center bg-gris-500 text-white hover:bg-menta-600"
-        >
-          {access.submit}
-        </button>
-
-        {aviso ? (
+        {estado.error ? (
           <div
-            role="status"
-            className="mt-5 flex items-start gap-3 rounded-xl border border-menta-200 bg-menta-50 p-4 dark:border-menta-800 dark:bg-menta-900/25"
+            role="alert"
+            className="mt-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/30"
           >
-            <Info
-              className="mt-0.5 size-4 shrink-0 text-menta-600 dark:text-menta-300"
-              strokeWidth={2.25}
-            />
-            <div>
-              <p className="text-sm font-semibold text-heading">
-                {access.notice.title}
-              </p>
-              <p className="mt-1.5 text-xs leading-relaxed text-ink-soft dark:text-body">
-                {access.notice.body}
-              </p>
-            </div>
+            <AlertCircle className="mt-0.5 size-4 shrink-0 text-red-700 dark:text-red-300" strokeWidth={2.25} />
+            <p className="text-sm text-red-900 dark:text-red-200">{estado.error}</p>
           </div>
         ) : null}
+
+        <button
+          type="submit"
+          disabled={enviando}
+          className="btn mt-6 h-12 w-full justify-center bg-gris-500 text-white hover:bg-menta-600 disabled:cursor-wait disabled:opacity-70"
+        >
+          {enviando ? "Verificando…" : access.submit}
+        </button>
       </form>
     </div>
   );

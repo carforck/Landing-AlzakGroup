@@ -90,9 +90,25 @@ function config(): mysql.PoolOptions {
  */
 const global_ = globalThis as unknown as { _capulmonPool?: mysql.Pool };
 
-function pool(): mysql.Pool {
+export function pool(): mysql.Pool {
   if (!global_._capulmonPool) {
-    global_._capulmonPool = mysql.createPool(config());
+    const p = mysql.createPool(config());
+    /*
+     * Solo lectura forzada en el servidor, en cada conexión nueva. El usuario
+     * de base que usa hoy el despliegue tiene permiso de escritura sobre todo
+     * el servidor; mientras no se cambie por uno de solo lectura, esto hace que
+     * MySQL rechace cualquier INSERT, UPDATE o DELETE que se escape por error.
+     *
+     * El evento entrega la conexión base (API de callbacks) antes de cederla a
+     * quien la pidió, y las consultas de una conexión se ejecutan en orden, así
+     * que esta sentencia siempre va por delante de la primera consulta real.
+     */
+    p.on("connection", (conn) => {
+      (conn as unknown as { query: (sql: string) => void }).query(
+        "SET SESSION TRANSACTION READ ONLY",
+      );
+    });
+    global_._capulmonPool = p;
   }
   return global_._capulmonPool;
 }
@@ -111,7 +127,7 @@ function pool(): mysql.Pool {
  * de arquitectura. Esto lo salva al leer, pero lo correcto es unificar el
  * esquema en origen.
  */
-const FECHA = `COALESCE(
+export const FECHA = `COALESCE(
   STR_TO_DATE(LEFT(fecha,19),'%Y-%m-%d %H:%i:%s'),
   STR_TO_DATE(LEFT(fecha,16),'%d/%m/%Y %H:%i'),
   STR_TO_DATE(LEFT(fecha,10),'%d/%m/%Y'),

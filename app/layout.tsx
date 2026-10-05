@@ -101,7 +101,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es-CO" className={`${inter.variable} ${interTight.variable}`}>
+    <html
+      lang="es-CO"
+      className={`${inter.variable} ${interTight.variable}`}
+      // El portal marca <html> con data-bienvenida-vista antes de hidratar
+      // (ver PortalBienvenida). Sólo silencia la diferencia de atributos de
+      // este elemento, no la de sus hijos.
+      suppressHydrationWarning
+    >
       <body>
         <a
           href="#contenido"

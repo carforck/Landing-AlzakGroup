@@ -14,6 +14,23 @@ import type { NextRequest } from "next/server";
  * que sigue pendiente; solo evita que el panel quede público mientras tanto.
  */
 export function proxy(request: NextRequest) {
+  /*
+   * Portal por empresa: aquí sólo se mira que exista la cookie, para no servir
+   * la página a quien llega sin sesión. La validación real (firma, caducidad,
+   * empresa y rol) la hace `exigirSesion` en cada página, porque el proxy no
+   * es el sitio para autorizar.
+   */
+  if (request.nextUrl.pathname.startsWith("/portal")) {
+    // En `next dev` con PORTAL_SIN_LOGIN=1 se entra por la ruta (ver sinLoginDesarrollo).
+    const sinLogin = process.env.NODE_ENV === "development" && process.env.PORTAL_SIN_LOGIN === "1";
+    if (!sinLogin && !request.cookies.has("capulmon_sesion")) {
+      return NextResponse.redirect(new URL("/acceso", request.url));
+    }
+    const r = NextResponse.next();
+    r.headers.set("Cache-Control", "no-store");
+    return r;
+  }
+
   const usuario = process.env.ADMIN_USER;
   const clave = process.env.ADMIN_PASSWORD;
 
@@ -60,5 +77,5 @@ function iguales(a: string, b: string) {
 }
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/portal", "/portal/:path*"],
 };

@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  *
  * Marca `data-animate="on"` mientras el contenido está en pantalla y "off"
  * cuando sale, que es el mecanismo con el que el sitio pausa sus bucles. La
- * lógica ya existía repetida en DriftingMotif, DriftingColumns y MotifField;
+ * lógica ya existía repetida en DriftingMotif y MotifField;
  * aquí se extrae para lo que no necesita, además, dibujar nada.
  */
 export function InViewGate({

@@ -20,7 +20,7 @@ import { access } from "../content/site";
 const SIN_CROMO = new Set<string>([access.href]);
 
 /** La administración tiene su propia barra lateral y no usa la del sitio. */
-const PREFIJOS_SIN_CROMO = ["/admin"];
+const PREFIJOS_SIN_CROMO = ["/admin", "/portal"];
 
 export function ChromeGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();

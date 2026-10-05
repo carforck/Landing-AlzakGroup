@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  /*
+   * Sólo afecta a `next dev`: permite abrir el sitio desde otros equipos de la
+   * red local (celular, tableta) por la IP del equipo. Sin esto Next 16 bloquea
+   * los recursos de desarrollo pedidos desde un origen que no es localhost.
+   */
+  allowedDevOrigins: ["192.168.1.*"],
   images: {
     formats: ["image/avif", "image/webp"],
     /*
