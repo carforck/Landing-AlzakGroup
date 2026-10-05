@@ -34,7 +34,7 @@ export function History() {
       <div className="shell grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
         <div className="relative -mx-6 aspect-[4/3] overflow-hidden lg:absolute lg:inset-y-0 lg:left-0 lg:mx-0 lg:aspect-auto lg:w-[44%]">
           <Image
-            src="/gscn-origen-v2.webp"
+            src="/historia-equipo.webp"
             alt=""
             fill
             /*
@@ -42,12 +42,12 @@ export function History() {
              *
              * `sizes` sirve para elegir cuántos píxeles bajar, y con `object-cover`
              * el ancho de la caja no basta para calcularlos: la caja mide 634×1078
-             * y la fotografía es 1400×1026, así que para cubrir 1078 de alto hay
+             * y la fotografía es 2000×1500 (4:3), así que para cubrir 1078 de alto hay
              * que escalarla por su altura y el ancho efectivo pasa a ser
-             * 1078 × 1.365 ≈ 1470 px. Declarando 44vw se servía el recorte de
-             * 640 px y se ampliaba 2.3×: la foto salía blanda.
+             * 1078 × 1.333 ≈ 1437 px. Declarando 44vw se serviría el recorte de
+             * 640 px y se ampliaría 2.5×: la foto saldría blanda.
              * 100vw pide ese ancho; el optimizador no sube del original, así que
-             * el techo son los 1400 px del archivo.
+             * el techo son los 2000 px del archivo. Se recortó a 4:3 a propósito: con 3:2 ninguna variante servida llegaba a 1078 px de alto.
              */
             sizes="100vw"
             quality={80}

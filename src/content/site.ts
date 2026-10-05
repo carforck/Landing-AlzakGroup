@@ -351,7 +351,14 @@ export const brand = {
 export const contact = {
   title: "Escríbanos",
   subtitle: "Ingrese sus datos y envíenos un mensaje. Pronto nos pondremos en contacto.",
-  phones: ["(+57) 300-243-3252", "(+57) 605-643-6819"],
+  /*
+   * Solo el móvil. El fijo (+57) 605-643-6819 se retiró a petición del cliente.
+   * Todo lo que muestra teléfonos mapea sobre este array (pie de página, sección
+   * de contacto y los datos estructurados de Organization), así que quitarlo de
+   * aquí lo elimina de los tres a la vez. El botón de WhatsApp usa `phones[0]`,
+   * que sigue siendo el móvil.
+   */
+  phones: ["(+57) 300-243-3252"],
   email: "info@alzak.com.co",
   city: "Cartagena de Indias, Colombia",
   social: [
