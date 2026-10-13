@@ -2,35 +2,59 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 /**
- * Clave mínima para /admin.
+ * Puertas de /admin y de /portal.
  *
- * El panel lee en directo las bases de CAPULMON: por cada paciente de riesgo
- * alto muestra centro, fecha, edad, sexo, puntaje y probabilidad. Son datos de
- * salud (Ley 1581), así que no se sirven sin credenciales.
+ * Ambos muestran datos de salud (Ley 1581), así que nada se sirve sin
+ * credenciales. Las dos puertas usan HTTP Basic sobre HTTPS con claves que
+ * viven sólo en variables de entorno, nunca en el código, y fallan cerradas.
  *
- * Es HTTP Basic sobre HTTPS, con usuario y clave en ADMIN_USER y
- * ADMIN_PASSWORD. Falla cerrado: si alguna de las dos falta en el despliegue,
- * /admin responde 503 en lugar de abrirse. No sustituye al portal de /acceso,
- * que sigue pendiente; solo evita que el panel quede público mientras tanto.
+ * /admin: ADMIN_USER y ADMIN_PASSWORD. Si falta alguna, responde 503.
+ *
+ * /portal, tres formas de entrar, en este orden:
+ *  1. `next dev` con PORTAL_SIN_LOGIN=1: por la ruta, sin nada (localhost).
+ *  2. Cookie de sesión del login de /acceso (usuarios de Shiny).
+ *  3. Clave compartida PORTAL_USUARIO / PORTAL_CLAVE, para la validación
+ *     interna que pidió Carlos (2026-10-13): el navegador la pide una vez y
+ *     luego se navega por las rutas /portal/<empresa>. Si PORTAL_CLAVE no
+ *     está definida, esta vía no existe y se manda al login.
  */
-export function proxy(request: NextRequest) {
-  /*
-   * Portal por empresa: aquí sólo se mira que exista la cookie, para no servir
-   * la página a quien llega sin sesión. La validación real (firma, caducidad,
-   * empresa y rol) la hace `exigirSesion` en cada página, porque el proxy no
-   * es el sitio para autorizar.
-   */
-  if (request.nextUrl.pathname.startsWith("/portal")) {
-    // En `next dev` con PORTAL_SIN_LOGIN=1 se entra por la ruta (ver sinLoginDesarrollo).
-    const sinLogin = process.env.NODE_ENV === "development" && process.env.PORTAL_SIN_LOGIN === "1";
-    if (!sinLogin && !request.cookies.has("capulmon_sesion")) {
-      return NextResponse.redirect(new URL("/acceso", request.url));
-    }
-    const r = NextResponse.next();
-    r.headers.set("Cache-Control", "no-store");
-    return r;
-  }
 
+/** Cabecera interna con la que el proxy avisa a las páginas de que la clave compartida fue válida. */
+const CABECERA_CLAVE = "x-portal-clave";
+
+export function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith("/portal")) return puertaPortal(request);
+  return puertaAdmin(request);
+}
+
+function puertaPortal(request: NextRequest) {
+  // Nadie puede traer esta cabecera desde fuera: sólo la pone el proxy.
+  const cabeceras = new Headers(request.headers);
+  cabeceras.delete(CABECERA_CLAVE);
+
+  const seguir = () => {
+    const r = NextResponse.next({ request: { headers: cabeceras } });
+    r.headers.set("Cache-Control", "no-store");
+    r.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return r;
+  };
+
+  // En `next dev` con PORTAL_SIN_LOGIN=1 se entra por la ruta (ver sinLoginDesarrollo).
+  if (process.env.NODE_ENV === "development" && process.env.PORTAL_SIN_LOGIN === "1") return seguir();
+  if (request.cookies.has("capulmon_sesion")) return seguir();
+
+  const clave = process.env.PORTAL_CLAVE;
+  if (!clave) return NextResponse.redirect(new URL("/acceso", request.url));
+
+  const usuario = process.env.PORTAL_USUARIO || "alzak";
+  if (basicValido(request, usuario, clave)) {
+    cabeceras.set(CABECERA_CLAVE, "ok");
+    return seguir();
+  }
+  return pedirClave("Portal ALZAK");
+}
+
+function puertaAdmin(request: NextRequest) {
   const usuario = process.env.ADMIN_USER;
   const clave = process.env.ADMIN_PASSWORD;
 
@@ -40,26 +64,31 @@ export function proxy(request: NextRequest) {
       headers: { "Cache-Control": "no-store" },
     });
   }
-
-  const cabecera = request.headers.get("authorization") ?? "";
-  if (cabecera.startsWith("Basic ")) {
-    let recibido = "";
-    try {
-      recibido = atob(cabecera.slice(6));
-    } catch {
-      // Base64 inválido: se trata como credencial incorrecta.
-    }
-    if (iguales(recibido, `${usuario}:${clave}`)) {
-      const respuesta = NextResponse.next();
-      respuesta.headers.set("Cache-Control", "no-store");
-      return respuesta;
-    }
+  if (basicValido(request, usuario, clave)) {
+    const respuesta = NextResponse.next();
+    respuesta.headers.set("Cache-Control", "no-store");
+    return respuesta;
   }
+  return pedirClave("Administracion ALZAK");
+}
 
+function basicValido(request: NextRequest, usuario: string, clave: string) {
+  const cabecera = request.headers.get("authorization") ?? "";
+  if (!cabecera.startsWith("Basic ")) return false;
+  let recibido = "";
+  try {
+    recibido = new TextDecoder().decode(Uint8Array.from(atob(cabecera.slice(6)), (c) => c.charCodeAt(0)));
+  } catch {
+    // Base64 inválido: se trata como credencial incorrecta.
+  }
+  return iguales(recibido, `${usuario}:${clave}`);
+}
+
+function pedirClave(realm: string) {
   return new NextResponse("Se requiere autenticación.", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="Administracion ALZAK", charset="UTF-8"',
+      "WWW-Authenticate": `Basic realm="${realm}", charset="UTF-8"`,
       "Cache-Control": "no-store",
     },
   });

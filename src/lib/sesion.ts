@@ -1,6 +1,6 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { empresaPorSlug, ROLES, type Empresa, type Rol, type Seccion, puede } from "../tenants/config";
 
@@ -104,7 +104,28 @@ export async function leerSesion(slugUrl?: string): Promise<Sesion | null> {
   const almacen = await cookies();
   const real = abrir(almacen.get(COOKIE_SESION)?.value);
   if (real) return real;
-  return slugUrl ? sesionDesarrollo(slugUrl) : null;
+  if (!slugUrl) return null;
+  return sesionDesarrollo(slugUrl) ?? (await sesionClaveCompartida(slugUrl));
+}
+
+/**
+ * Sesión del equipo cuando se entró con la clave compartida de PORTAL_CLAVE.
+ *
+ * Quien valida la clave es el proxy, que entonces añade `x-portal-clave: ok`
+ * a la petición y borra cualquier cabecera igual que venga de fuera. Aquí se
+ * exige además que PORTAL_CLAVE exista: sin ella esta vía no existe aunque la
+ * cabecera apareciera.
+ */
+async function sesionClaveCompartida(slug: string): Promise<Sesion | null> {
+  if (!process.env.PORTAL_CLAVE || !empresaPorSlug(slug)) return null;
+  if ((await headers()).get("x-portal-clave") !== "ok") return null;
+  return {
+    usuario: process.env.PORTAL_USUARIO || "alzak",
+    nombre: "Equipo ALZAK",
+    empresa: slug,
+    rol: "admin",
+    exp: Math.floor(Date.now() / 1000) + DURACION_S,
+  };
 }
 
 /**
