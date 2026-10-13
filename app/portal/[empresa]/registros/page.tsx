@@ -37,8 +37,11 @@ export default async function RegistrosPage({
 
   const sp = await searchParams;
   const filtros = leerFiltros(sp, empresa);
-  const paginaPedida = Number(Array.isArray(sp.pagina) ? sp.pagina[0] : sp.pagina);
-  const pagina = Number.isInteger(paginaPedida) && paginaPedida > 0 ? paginaPedida : 1;
+  const paginaPedida = Number(
+    Array.isArray(sp.pagina) ? sp.pagina[0] : sp.pagina,
+  );
+  const pagina =
+    Number.isInteger(paginaPedida) && paginaPedida > 0 ? paginaPedida : 1;
 
   const [{ filas, total }, geo, rango] = await Promise.all([
     obtenerRegistros(empresa, filtros, pagina, POR_PAGINA),
@@ -75,60 +78,150 @@ export default async function RegistrosPage({
       </header>
 
       <div className="mt-6">
-        <Filtros accion={`/portal/${empresa.slug}/registros`} geo={geo} conFechas rango={rango} valores={filtros} />
+        <Filtros
+          accion={`/portal/${empresa.slug}/registros`}
+          geo={geo}
+          conFechas
+          rango={rango}
+          valores={filtros}
+        />
       </div>
 
       <section className="mt-6 overflow-hidden rounded-2xl border border-hairline bg-surface">
         <p className="border-b border-hairline px-6 py-4 text-sm text-heading">
-          <strong className="tabular-nums">{total.toLocaleString("es-CO")}</strong> registros encontrados
+          <strong className="tabular-nums">
+            {total.toLocaleString("es-CO")}
+          </strong>{" "}
+          registros encontrados
         </p>
         {filas.length ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-surface-muted text-xs text-ink-soft">
-                <tr>
-                  {columnas.map((c) => (
-                    <th key={c.clave} scope="col" className="px-4 py-3 font-medium whitespace-nowrap">
-                      {c.titulo}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-hairline">
-                {filas.map((f, i) => (
-                  <tr key={i} className={tinte[String(f.class_risk)] ?? ""}>
-                    {columnas.map((c) => {
-                      const v = f[c.clave];
-                      let contenido: React.ReactNode = v ?? "";
-                      if (c.clave === "class_risk") contenido = <Insignia nivel={v ? String(v) : null} />;
-                      else if ((c.clave === "municipio" || c.clave === "departamento") && v) contenido = nombreLugar(String(v));
-                      else if (c.clave === "prob" && v !== null && v !== "") {
-                        const n = Number(v);
-                        contenido =
-                          n >= 0 && n <= 1 ? (
-                            `${(n * 100).toFixed(2).replace(".", ",")} %`
-                          ) : (
-                            <span className="text-riesgo-moderado" title={`Valor guardado: ${String(v)}. La probabilidad debe estar entre 0 y 1.`}>
-                              Fuera de rango
-                            </span>
-                          );
-                      }
-                      return (
-                        <td key={c.clave} className="px-4 py-2.5 whitespace-nowrap text-heading tabular-nums">
-                          {contenido}
-                        </td>
-                      );
-                    })}
+          <>
+            {/*
+            Móvil: una tarjeta por registro. La tabla tiene doce columnas y en
+            390 px sólo cabían dos; el resto quedaba oculto sin pista de que se
+            podía deslizar.
+          */}
+            <ul className="divide-y divide-hairline md:hidden">
+              {filas.map((f, i) => {
+                const prob = Number(f.prob);
+                const probTxt =
+                  f.prob === null || f.prob === ""
+                    ? ""
+                    : prob >= 0 && prob <= 1
+                      ? `${(prob * 100).toFixed(2).replace(".", ",")} %`
+                      : "Prob. fuera de rango";
+                return (
+                  <li
+                    key={i}
+                    className={`px-5 py-4 ${tinte[String(f.class_risk)] ?? ""}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-heading">
+                          {[f.nombre, f.apellido].filter(Boolean).join(" ") ||
+                            "Sin nombre"}
+                        </p>
+                        <p className="mt-0.5 text-xs text-ink-soft tabular-nums">
+                          {[f.tipo_doc, f.documento].filter(Boolean).join(" ")}{" "}
+                          · {f.fecha ?? ""}
+                        </p>
+                      </div>
+                      <Insignia
+                        nivel={f.class_risk ? String(f.class_risk) : null}
+                      />
+                    </div>
+                    <p className="mt-2 text-sm text-heading">
+                      {[
+                        f.edad ? `${f.edad} años` : null,
+                        f.sexo === "M"
+                          ? "Hombre"
+                          : f.sexo === "F"
+                            ? "Mujer"
+                            : f.sexo,
+                        f.municipio ? nombreLugar(String(f.municipio)) : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    <p className="mt-1 text-xs text-ink-soft">
+                      {probTxt ? `Probabilidad ${probTxt}` : ""}
+                      {f.fumador ? ` · Fumador: ${f.fumador}` : ""}
+                      {f.epoc ? ` · EPOC: ${f.epoc}` : ""}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-muted text-xs text-ink-soft">
+                  <tr>
+                    {columnas.map((c) => (
+                      <th
+                        key={c.clave}
+                        scope="col"
+                        className="px-4 py-3 font-medium whitespace-nowrap"
+                      >
+                        {c.titulo}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-hairline">
+                  {filas.map((f, i) => (
+                    <tr key={i} className={tinte[String(f.class_risk)] ?? ""}>
+                      {columnas.map((c) => {
+                        const v = f[c.clave];
+                        let contenido: React.ReactNode = v ?? "";
+                        if (c.clave === "class_risk")
+                          contenido = <Insignia nivel={v ? String(v) : null} />;
+                        else if (
+                          (c.clave === "municipio" ||
+                            c.clave === "departamento") &&
+                          v
+                        )
+                          contenido = nombreLugar(String(v));
+                        else if (c.clave === "prob" && v !== null && v !== "") {
+                          const n = Number(v);
+                          contenido =
+                            n >= 0 && n <= 1 ? (
+                              `${(n * 100).toFixed(2).replace(".", ",")} %`
+                            ) : (
+                              <span
+                                className="text-riesgo-moderado"
+                                title={`Valor guardado: ${String(v)}. La probabilidad debe estar entre 0 y 1.`}
+                              >
+                                Fuera de rango
+                              </span>
+                            );
+                        }
+                        return (
+                          <td
+                            key={c.clave}
+                            className="px-4 py-2.5 whitespace-nowrap text-heading tabular-nums"
+                          >
+                            {contenido}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         ) : (
-          <p className="px-6 py-12 text-center text-sm text-ink-soft">No hay registros con estos filtros.</p>
+          <p className="px-6 py-12 text-center text-sm text-ink-soft">
+            No hay registros con estos filtros.
+          </p>
         )}
         <div className="border-t border-hairline">
-          <Paginador pagina={pagina} paginas={paginas} total={total} porPagina={POR_PAGINA} />
+          <Paginador
+            pagina={pagina}
+            paginas={paginas}
+            total={total}
+            porPagina={POR_PAGINA}
+          />
         </div>
       </section>
     </main>

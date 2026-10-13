@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import type { CSSProperties, ReactNode } from "react";
 import { PortalBienvenida } from "../../../src/components/portal/PortalBienvenida";
 import { PortalNav } from "../../../src/components/portal/PortalNav";
-import { exigirSesion } from "../../../src/lib/sesion";
+import { esEquipo, exigirSesion } from "../../../src/lib/sesion";
 import { ETIQUETA_ROL, puede } from "../../../src/tenants/config";
 import { salir } from "../../acceso/actions";
 
@@ -28,6 +28,7 @@ export default async function PortalLayout({
 }) {
   const { empresa: slug } = await params;
   const { sesion, empresa } = await exigirSesion(slug);
+  const equipo = await esEquipo();
 
   const entradas = [
     { href: `/portal/${empresa.slug}`, etiqueta: "Tablero", icono: "tablero", ver: puede(sesion.rol, "tablero") },
@@ -60,6 +61,7 @@ export default async function PortalLayout({
         rol={ETIQUETA_ROL[sesion.rol]}
         entradas={entradas.filter((e) => e.ver).map(({ href, etiqueta, icono }) => ({ href, etiqueta, icono }))}
         salir={salir}
+        cambiarEmpresa={equipo}
       />
       <div className="portal-contenido">{children}</div>
     </div>

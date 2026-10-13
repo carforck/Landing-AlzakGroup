@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
+  ArrowLeftRight,
   ClipboardList,
   Info,
   LayoutDashboard,
@@ -42,6 +43,7 @@ export function PortalNav({
   rol,
   entradas,
   salir,
+  cambiarEmpresa = false,
 }: {
   logo: { src: string; ancho: number; alto: number };
   empresa: string;
@@ -49,6 +51,8 @@ export function PortalNav({
   rol: string;
   entradas: Entrada[];
   salir: () => Promise<void>;
+  /** Equipo ALZAK con clave compartida: puede volver al selector de empresas. */
+  cambiarEmpresa?: boolean;
 }) {
   const pathname = usePathname();
   const [abierto, setAbierto] = useState(false);
@@ -101,7 +105,16 @@ export function PortalNav({
       <div className="border-t border-white/10 px-5 py-5">
         <p className="truncate text-sm font-semibold text-white">{usuario}</p>
         <p className="text-xs text-white/65">{rol}</p>
-        <form action={salir} className="mt-4">
+        {cambiarEmpresa ? (
+          <Link
+            href="/portal"
+            className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-white/10 text-sm text-white transition-colors duration-200 hover:bg-white/15"
+          >
+            <ArrowLeftRight className="size-4" strokeWidth={2} />
+            Cambiar de empresa
+          </Link>
+        ) : null}
+        <form action={salir} className="mt-2">
           <button
             type="submit"
             className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-white/20 text-sm text-white transition-colors duration-200 hover:bg-white/10"

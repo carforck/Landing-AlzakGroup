@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { validarCredencial } from "../../src/lib/portal-db";
-import { COOKIE_SESION, sellar } from "../../src/lib/sesion";
+import { claveCompartidaValida, COOKIE_EQUIPO, COOKIE_SESION, sellar, sellarEquipo } from "../../src/lib/sesion";
 
 export type EstadoIngreso = { error: string | null; usuario: string };
 
@@ -51,6 +51,20 @@ export async function ingresar(_prev: EstadoIngreso, datos: FormData): Promise<E
     return { error: "Demasiados intentos. Espere 15 minutos o escriba a soporte.", usuario };
   }
 
+  // Clave compartida del equipo interno: entra al selector de empresas.
+  if (claveCompartidaValida(leido.data.usuario, leido.data.clave)) {
+    fallos.delete(llave);
+    const { valor, maxAge } = sellarEquipo();
+    (await cookies()).set(COOKIE_EQUIPO, valor, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge,
+    });
+    redirect("/portal");
+  }
+
   let coincidencias;
   try {
     coincidencias = await validarCredencial(leido.data.usuario, leido.data.clave);
@@ -91,6 +105,8 @@ export async function ingresar(_prev: EstadoIngreso, datos: FormData): Promise<E
 }
 
 export async function salir() {
-  (await cookies()).delete(COOKIE_SESION);
+  const almacen = await cookies();
+  almacen.delete(COOKIE_SESION);
+  almacen.delete(COOKIE_EQUIPO);
   redirect("/acceso");
 }

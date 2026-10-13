@@ -41,7 +41,9 @@ function puertaPortal(request: NextRequest) {
 
   // En `next dev` con PORTAL_SIN_LOGIN=1 se entra por la ruta (ver sinLoginDesarrollo).
   if (process.env.NODE_ENV === "development" && process.env.PORTAL_SIN_LOGIN === "1") return seguir();
-  if (request.cookies.has("capulmon_sesion")) return seguir();
+  // Sesión de usuario o de equipo: aquí sólo se mira que exista; la firma la
+  // valida el servidor en cada página.
+  if (request.cookies.has("capulmon_sesion") || request.cookies.has("capulmon_equipo")) return seguir();
 
   const clave = process.env.PORTAL_CLAVE;
   if (!clave) return NextResponse.redirect(new URL("/acceso", request.url));

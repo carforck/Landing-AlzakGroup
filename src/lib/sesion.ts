@@ -109,6 +109,51 @@ export async function leerSesion(slugUrl?: string): Promise<Sesion | null> {
 }
 
 /**
+ * Cookie de equipo: la deja el formulario de /acceso cuando se escribe la
+ * clave compartida (PORTAL_USUARIO / PORTAL_CLAVE). Da paso a todas las
+ * empresas, porque es para el equipo interno de ALZAK. Firmada con la misma
+ * HMAC que la sesión; deja de valer si se quita PORTAL_CLAVE.
+ */
+export const COOKIE_EQUIPO = "capulmon_equipo";
+
+export function sellarEquipo(): { valor: string; maxAge: number } {
+  const cuerpo = Buffer.from(JSON.stringify({ equipo: true, exp: Math.floor(Date.now() / 1000) + DURACION_S })).toString("base64url");
+  return { valor: `${cuerpo}.${firmar(cuerpo)}`, maxAge: DURACION_S };
+}
+
+function equipoValido(valor: string | undefined): boolean {
+  if (!valor || !process.env.PORTAL_CLAVE) return false;
+  const [cuerpo, firma] = valor.split(".");
+  if (!cuerpo || !firma) return false;
+  const esperada = Buffer.from(firmar(cuerpo));
+  const recibida = Buffer.from(firma);
+  if (esperada.length !== recibida.length || !timingSafeEqual(esperada, recibida)) return false;
+  try {
+    const d = JSON.parse(Buffer.from(cuerpo, "base64url").toString()) as { equipo?: boolean; exp?: number };
+    return d.equipo === true && typeof d.exp === "number" && d.exp > Date.now() / 1000;
+  } catch {
+    return false;
+  }
+}
+
+/** Si quien navega entró como equipo (cookie del formulario o clave del navegador). */
+export async function esEquipo(): Promise<boolean> {
+  if (!process.env.PORTAL_CLAVE) return false;
+  if ((await headers()).get("x-portal-clave") === "ok") return true;
+  return equipoValido((await cookies()).get(COOKIE_EQUIPO)?.value);
+}
+
+/** Comprueba la clave compartida tecleada en /acceso, en tiempo constante. */
+export function claveCompartidaValida(usuario: string, clave: string): boolean {
+  const u = process.env.PORTAL_USUARIO || "alzak";
+  const c = process.env.PORTAL_CLAVE;
+  if (!c) return false;
+  const a = Buffer.from(`${usuario}:${clave}`);
+  const b = Buffer.from(`${u}:${c}`);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/**
  * Sesión del equipo cuando se entró con la clave compartida de PORTAL_CLAVE.
  *
  * Quien valida la clave es el proxy, que entonces añade `x-portal-clave: ok`
@@ -117,8 +162,7 @@ export async function leerSesion(slugUrl?: string): Promise<Sesion | null> {
  * cabecera apareciera.
  */
 async function sesionClaveCompartida(slug: string): Promise<Sesion | null> {
-  if (!process.env.PORTAL_CLAVE || !empresaPorSlug(slug)) return null;
-  if ((await headers()).get("x-portal-clave") !== "ok") return null;
+  if (!empresaPorSlug(slug) || !(await esEquipo())) return null;
   return {
     usuario: process.env.PORTAL_USUARIO || "alzak",
     nombre: "Equipo ALZAK",

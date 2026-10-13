@@ -292,11 +292,16 @@ export function FormEncuesta({
         </section>
       ))}
 
-      <div className="sticky bottom-4 z-20 mt-6 flex justify-end">
+      {/*
+        Móvil: barra fija a todo lo ancho con fondo, para que el botón no flote
+        sobre los campos mientras se escribe. Desde `md`, botón flotante a la
+        derecha como antes.
+      */}
+      <div className="sticky bottom-0 z-20 -mx-5 mt-6 border-t border-hairline bg-surface/95 px-5 py-3 backdrop-blur md:bottom-4 md:mx-0 md:flex md:justify-end md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
         <button
           type="button"
           onClick={calcular}
-          className="inline-flex h-12 items-center gap-2 rounded-xl bg-[var(--t-primario)] px-6 text-sm font-semibold text-white shadow-lg hover:opacity-95"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--t-primario)] px-6 text-sm font-semibold text-white shadow-lg hover:opacity-95 md:w-auto"
         >
           <Calculator className="size-4" strokeWidth={2.25} />
           Calcular riesgo

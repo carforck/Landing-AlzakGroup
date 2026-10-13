@@ -109,7 +109,9 @@ function Marco({
           {[...new Set(marcas)].map((i, n, arr) => (
             <span
               key={i}
-              className="absolute whitespace-nowrap"
+              // En pantallas angostas cinco fechas se montan: se dejan la primera,
+              // la del medio y la última.
+              className={`absolute whitespace-nowrap ${n % 2 === 1 ? "hidden sm:inline" : ""}`}
               style={{ left: `${(x(i) / W) * 100}%`, transform: n === 0 ? "none" : n === arr.length - 1 ? "translateX(-100%)" : "translateX(-50%)" }}
             >
               {fecha(inicios[i])}

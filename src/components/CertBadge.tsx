@@ -16,6 +16,10 @@ import { access, quality } from "../content/site";
  * de la calculadora y la de ingreso. En la página de Calidad se oculta, porque
  * llevaría a donde ya se está, y en Privacidad sobra.
  *
+ * Sólo desde `md`: en móvil, anclada al borde derecho a media altura, tapaba
+ * campos del formulario de ingreso y botones de la portada. El certificado
+ * sigue a un toque en la página de Calidad.
+ *
  * En reposo asoma únicamente el sello; al pasar el cursor o al recibir el foco
  * la pestaña se desliza y descubre el texto. La pieza entera es un enlace, así
  * que funciona igual con teclado.
@@ -30,7 +34,7 @@ export function CertBadge() {
     <Link
       href="/calidad"
       aria-label={`${quality.certificate.alt}. Ver el sistema de gestión de calidad`}
-      className="group fixed top-1/2 right-0 z-[80] flex -translate-y-1/2 items-center gap-3 rounded-l-2xl border border-r-0 border-hairline bg-surface py-3 pr-2 pl-3 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_30px_-12px_rgba(0,0,0,0.25)] transition-[padding,border-color] duration-[380ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-menta-400 hover:pr-4 focus-visible:border-menta-400"
+      className="group fixed top-1/2 right-0 z-[80] hidden -translate-y-1/2 md:flex items-center gap-3 rounded-l-2xl border border-r-0 border-hairline bg-surface py-3 pr-2 pl-3 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_30px_-12px_rgba(0,0,0,0.25)] transition-[padding,border-color] duration-[380ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-menta-400 hover:pr-4 focus-visible:border-menta-400"
     >
       {/*
         El texto ocupa ancho 0 en reposo y se abre en el hover. Se anima

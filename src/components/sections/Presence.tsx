@@ -4,7 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { presence } from "../../content/site";
 import { CountUp } from "../CountUp";
 import { MallaOndas } from "../MallaOndas";
-import { COLOR_CATEGORIA, geometriaGlobo, PresenceGlobe } from "../PresenceGlobe";
+import {
+  COLOR_CATEGORIA,
+  geometriaGlobo,
+  PresenceGlobe,
+} from "../PresenceGlobe";
 
 type Categoria = (typeof presence.categorias)[number]["clave"];
 
@@ -32,7 +36,8 @@ export function Presence() {
   const globo = useRef<HTMLDivElement>(null);
   const anclas = useRef<(HTMLSpanElement | null)[]>([]);
   const seccion = useRef<HTMLElement>(null);
-  const cuenta = (c: Categoria) => presence.lugares.filter((l) => l.categoria === c).length;
+  const cuenta = (c: Categoria) =>
+    presence.lugares.filter((l) => l.categoria === c).length;
 
   // Las ondas del fondo nacen en el centro del globo, en coordenadas de la sección.
   const origen = useCallback(() => {
@@ -68,7 +73,10 @@ export function Presence() {
     if (globo.current) ro.observe(globo.current);
     window.addEventListener("resize", medir);
 
-    const io = new IntersectionObserver(([e]) => e.isIntersecting && setVisto(true), { threshold: 0.35 });
+    const io = new IntersectionObserver(
+      ([e]) => e.isIntersecting && setVisto(true),
+      { threshold: 0.35 },
+    );
     if (fila.current) io.observe(fila.current);
     return () => {
       cancelAnimationFrame(primera);
@@ -79,15 +87,25 @@ export function Presence() {
   }, []);
 
   return (
-    <section ref={seccion} id="presencia" aria-labelledby="presencia-titulo" className="relative isolate overflow-hidden pt-16 lg:pt-20">
+    <section
+      ref={seccion}
+      id="presencia"
+      aria-labelledby="presencia-titulo"
+      className="relative isolate overflow-hidden pt-16 lg:pt-20"
+    >
       <MallaOndas origen={origen} />
       <div className="shell">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow justify-center">{presence.eyebrow}</p>
-          <h2 id="presencia-titulo" className="display mt-5 text-[2rem] sm:text-[2.5rem]">
+          <h2
+            id="presencia-titulo"
+            className="display mt-5 text-[2rem] sm:text-[2.5rem]"
+          >
             {presence.title}
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl leading-relaxed text-body">{presence.lead}</p>
+          <p className="mx-auto mt-5 max-w-2xl leading-relaxed text-body">
+            {presence.lead}
+          </p>
         </div>
       </div>
 
@@ -99,9 +117,17 @@ export function Presence() {
           se dibujan por detrás del texto, de modo que la del extremo cruza el
           halo como en la referencia.
         */}
-        <div ref={fila} data-visto={visto ? "si" : "no"} className="presencia-cifras relative z-10 mx-auto grid max-w-3xl grid-cols-2 gap-x-6 gap-y-8 px-2 md:grid-cols-4">
+        <div
+          ref={fila}
+          data-visto={visto ? "si" : "no"}
+          className="presencia-cifras relative z-10 mx-auto grid max-w-3xl grid-cols-2 gap-x-6 gap-y-8 px-2 md:grid-cols-4"
+        >
           {presence.cifras.map((c, i) => (
-            <div key={c.etiqueta} className="relative pl-5" style={{ ["--retraso" as string]: `${i * 140}ms` }}>
+            <div
+              key={c.etiqueta}
+              className="relative pl-5"
+              style={{ ["--retraso" as string]: `${i * 140}ms` }}
+            >
               <span
                 ref={(n) => {
                   anclas.current[i] = n;
@@ -115,9 +141,15 @@ export function Presence() {
                 style={{ height: largos[i] ?? 0 }}
               />
               <p className="presencia-valor display text-[2.25rem] leading-none text-menta-600 sm:text-[2.6rem]">
-                {visto ? <CountUp value={c.valor} /> : <span className="opacity-0">{c.valor}</span>}
+                {visto ? (
+                  <CountUp value={c.valor} />
+                ) : (
+                  <span className="opacity-0">{c.valor}</span>
+                )}
               </p>
-              <p className="presencia-texto mt-2 max-w-[19ch] text-sm leading-snug font-medium text-heading">{c.etiqueta}</p>
+              <p className="presencia-texto mt-2 max-w-[19ch] text-sm leading-snug font-medium text-heading">
+                {c.etiqueta}
+              </p>
             </div>
           ))}
         </div>
@@ -128,11 +160,15 @@ export function Presence() {
       </div>
 
       <div className="shell relative -mt-4 pb-8 md:-mt-24">
-        <ul className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2" aria-label="Categorías de presencia">
+        {/* En móvil, una sola fila que se desliza: seis píldoras apiladas ocupaban media pantalla. */}
+        <ul
+          className="-mx-5 flex snap-x gap-2 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-auto md:max-w-4xl md:flex-wrap md:justify-center md:overflow-visible md:px-0 md:pb-0"
+          aria-label="Categorías de presencia"
+        >
           {presence.categorias.map((c) => {
             const activa = resaltada === c.clave;
             return (
-              <li key={c.clave}>
+              <li key={c.clave} className="shrink-0 snap-start">
                 <button
                   type="button"
                   aria-pressed={activa}
@@ -141,15 +177,20 @@ export function Presence() {
                   onFocus={() => setResaltada(c.clave)}
                   onBlur={() => setResaltada(null)}
                   onClick={() => setResaltada(activa ? null : c.clave)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-sm whitespace-nowrap transition-colors ${
                     activa
                       ? "border-menta-400 bg-menta-50 text-heading dark:bg-menta-900/30"
                       : "border-hairline bg-surface text-ink-soft hover:text-heading"
                   }`}
                 >
-                  <span className="size-2.5 rounded-full" style={{ background: COLOR_CATEGORIA[c.clave] }} />
+                  <span
+                    className="size-2.5 rounded-full"
+                    style={{ background: COLOR_CATEGORIA[c.clave] }}
+                  />
                   {c.etiqueta}
-                  <span className="font-semibold tabular-nums text-heading">{cuenta(c.clave)}</span>
+                  <span className="font-semibold tabular-nums text-heading">
+                    {cuenta(c.clave)}
+                  </span>
                 </button>
               </li>
             );
