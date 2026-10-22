@@ -617,6 +617,22 @@ export const access = {
   back: "Volver a la calculadora",
 
   /**
+   * Panel de marca que acompaña al formulario. Tres datos verificables y nada
+   * más: en una pantalla de contraseña el texto de venta estorba, lo que suma
+   * es confirmar qué aplicativo es, qué modelo usa y cómo se cuidan los datos.
+   */
+  panel: {
+    eyebrow: "Aplicativo CAPULMON",
+    title: "Calculadora de riesgo de cáncer de pulmón",
+    lead: "Herramienta de tamizaje para el personal de salud de las instituciones aliadas.",
+    facts: [
+      { label: "Modelo PLCOm2012", detail: "Riesgo a 6 años, ajustado por exposición ambiental y ocupacional" },
+      { label: "Ley 1581 de 2012", detail: "Datos clínicos protegidos en la base de cada institución" },
+      { label: "ISO 9001:2015", detail: "Servicio certificado por Bureau Veritas" },
+    ],
+  },
+
+  /**
    * El portal aún no autentica. Se dice de forma explícita en lugar de simular
    * un ingreso: un formulario que aparenta funcionar y no funciona invita a la
    * gente a teclear su contraseña real sin que haya nada al otro lado.
@@ -627,7 +643,7 @@ export const access = {
   },
 
   /**
-   * Firma de autoría bajo la ilustración.
+   * Firma de autoría al pie del panel de marca.
    *
    * El texto sale del aviso que ya llevan las apps de CAPULMON en su pestaña de
    * créditos: "Copyright © 2024 propiedad de ALZAK Consulting & Research,

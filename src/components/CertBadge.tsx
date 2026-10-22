@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { access, quality } from "../content/site";
+import { quality } from "../content/site";
 
 /**
  * Etiqueta lateral con el sello de certificación ISO 9001:2015.
@@ -24,7 +24,9 @@ import { access, quality } from "../content/site";
  * la pestaña se desliza y descubre el texto. La pieza entera es un enlace, así
  * que funciona igual con teclado.
  */
-const RUTAS = new Set<string>(["/", "/calculadora-cancer-pulmon", access.href]);
+// /acceso ya no: su panel de marca muestra la certificación y el sello flotante
+// quedaba encima de ese panel.
+const RUTAS = new Set<string>(["/", "/calculadora-cancer-pulmon"]);
 
 export function CertBadge() {
   const pathname = usePathname();

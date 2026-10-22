@@ -29,15 +29,16 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <form
-        action={enviar}
-        className="rounded-2xl border border-hairline bg-surface p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_60px_-24px_rgba(0,0,0,0.25)] lg:p-8"
-      >
+      {/*
+        Sin tarjeta ni sombra: el formulario ya ocupa su propia columna sobre
+        fondo claro, y una caja dentro de otra sólo añadía ruido. El panel de
+        marca de al lado pone el color.
+      */}
+      <form action={enviar}>
         {/*
-          El logotipo va dentro de la tarjeta, no encima: en una pantalla de
-          ingreso la marca tiene que estar en la misma superficie donde se teclea
-          la contraseña. Es lo que confirma al visitante que está en el sitio
-          correcto y no en una copia.
+          El logotipo va sobre el formulario, en la misma superficie donde se
+          teclea la contraseña: es lo que confirma al visitante que está en el
+          sitio correcto y no en una copia. Nada flota encima de él.
         */}
         <Image
           src={brand.logo.color}
@@ -56,15 +57,15 @@ export function LoginForm() {
           className="hidden h-9 w-auto dark:block"
         />
 
-        <p className="eyebrow mt-6">{access.eyebrow}</p>
-        <h1 className="display mt-4 text-[1.75rem] sm:text-[2rem]">
+        <p className="eyebrow mt-10">{access.eyebrow}</p>
+        <h1 className="display mt-4 text-[1.75rem] text-heading sm:text-[2.125rem]">
           {access.title}
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft dark:text-body">
           {access.lead}
         </p>
 
-        <div className="mt-6 space-y-4">
+        <div className="mt-8 space-y-5">
           <label className="block">
             <span className="text-sm font-medium text-heading">
               {access.fields.user.label}
@@ -81,7 +82,7 @@ export function LoginForm() {
                 required
                 defaultValue={estado.usuario}
                 placeholder={access.fields.user.placeholder}
-                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-4 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
+                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-4 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-500 focus:ring-3 focus:ring-menta-400/20"
               />
             </div>
           </label>
@@ -101,7 +102,7 @@ export function LoginForm() {
                 autoComplete="current-password"
                 required
                 placeholder={access.fields.password.placeholder}
-                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-12 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-400"
+                className="h-12 w-full rounded-xl border border-hairline bg-surface pr-12 pl-11 text-sm text-heading transition-colors duration-200 outline-none placeholder:text-ink-soft focus:border-menta-500 focus:ring-3 focus:ring-menta-400/20"
               />
               {/*
                 El botón queda fuera del orden de tabulación con tabIndex -1: al
@@ -154,10 +155,14 @@ export function LoginForm() {
           </div>
         ) : null}
 
+        {/*
+          Azul petróleo (menta-800) y no el gris del resto del sitio: es el tono
+          del panel de marca, y el blanco sobre él supera 7:1 de contraste.
+        */}
         <button
           type="submit"
           disabled={enviando}
-          className="btn mt-6 h-12 w-full justify-center bg-gris-500 text-white hover:bg-menta-600 disabled:cursor-wait disabled:opacity-70"
+          className="btn mt-6 h-12 w-full justify-center bg-menta-800 text-white hover:bg-menta-700 disabled:cursor-wait disabled:opacity-70"
         >
           {enviando ? "Verificando…" : access.submit}
         </button>
