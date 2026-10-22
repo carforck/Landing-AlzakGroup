@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowRight, Check } from "lucide-react";
 import { DocumentsPreview } from "../../src/components/DocumentsPreview";
 import { Reveal } from "../../src/components/Reveal";
@@ -14,6 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function CalidadPage() {
+  // Apagada hasta que se defina su contenido: ver `quality.publicada`.
+  if (!quality.publicada) notFound();
+
   return (
     <>
       <section className="relative overflow-hidden border-b border-hairline">

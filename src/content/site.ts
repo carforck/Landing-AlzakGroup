@@ -331,6 +331,13 @@ export const clients = [
 ] as const;
 
 export const quality = {
+  /**
+   * La página /calidad está apagada hasta que se defina su contenido (pedido
+   * de Carlos, 2026-10-22). Con `false` responde 404, sale del sitemap y los
+   * enlaces del menú y del sello llevan a la sección de calidad de la portada.
+   * Para publicarla basta con cambiar esto a `true`.
+   */
+  publicada: false as boolean,
   title: "Sistema de Gestión de Calidad",
   paragraphs: [
     "ALZAK Consulting & Research es una empresa 100% colombiana que nace con el propósito de desarrollar proyectos de consultoría e investigación en las áreas de salud pública, economía de la salud y epidemiología. Cuenta con experiencia en el desarrollo de proyectos en el mercado nacional y tiene proyectado crecer a nivel internacional.",
@@ -678,7 +685,8 @@ export const navigation = [
   { label: "Nosotros", href: "/#nosotros" },
   { label: "Servicios", href: "/#servicios" },
   { label: "Equipo", href: "/#lideres" },
-  { label: "Calidad", href: "/calidad" },
+  // Mientras la página /calidad esté apagada (quality.publicada), lleva a la sección de la portada.
+  { label: "Calidad", href: "/#calidad" },
   { label: "Contáctenos", href: "/#contacto" },
   // El último elemento es el botón destacado de la barra (ver Navigation).
   { label: "Calculadora CaP", href: "/calculadora-cancer-pulmon" },

@@ -34,7 +34,9 @@ const nextConfig: NextConfig = {
       { source: "/sobre-nosotros", destination: "/#historia", permanent: true },
       // El sitio anterior llamaba "estudios" a lo que aquí son "servicios".
       { source: "/estudios", destination: "/#servicios", permanent: true },
-      { source: "/sistema-de-gestion", destination: "/calidad", permanent: true },
+      // Temporal mientras /calidad está apagada (quality.publicada en site.ts):
+      // lleva a la sección de calidad de la portada.
+      { source: "/sistema-de-gestion", destination: "/#calidad", permanent: false },
       { source: "/politica-de-privacidad", destination: "/privacidad", permanent: true },
       { source: "/en/home", destination: "/", permanent: false },
     ];

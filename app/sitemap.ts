@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { site } from "../src/content/site";
+import { quality, site } from "../src/content/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
@@ -12,12 +12,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    {
-      url: `${site.url}/calidad`,
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.7,
-    },
+    // /calidad sólo entra al sitemap cuando está publicada (quality.publicada).
+    ...(quality.publicada
+      ? [
+          {
+            url: `${site.url}/calidad`,
+            lastModified,
+            changeFrequency: "yearly" as const,
+            priority: 0.7,
+          },
+        ]
+      : []),
     {
       url: `${site.url}/privacidad`,
       lastModified,

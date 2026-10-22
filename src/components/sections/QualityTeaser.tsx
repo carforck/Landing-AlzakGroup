@@ -54,10 +54,13 @@ export function QualityTeaser() {
             ))}
           </ul>
 
-          <Link href="/calidad" className="btn btn-dark mt-10">
-            Ver el sistema de gestión
-            <ArrowRight className="btn-arrow size-4" strokeWidth={2.5} />
-          </Link>
+          {/* Sólo cuando la página /calidad esté publicada (quality.publicada). */}
+          {quality.publicada ? (
+            <Link href="/calidad" className="btn btn-dark mt-10">
+              Ver el sistema de gestión
+              <ArrowRight className="btn-arrow size-4" strokeWidth={2.5} />
+            </Link>
+          ) : null}
         </div>
 
         {/*
