@@ -292,7 +292,7 @@ export const leaders = [
     credentials: "Eco. MSc. Ph.D (c)",
     role: "Gerente General",
     hIndex: 37,
-    photo: "/team/nelson-jose-alvis-zakzuk.webp",
+    photo: "/team/nelson-jose-alvis-zakzuk-2026.webp",
     cvlac:
       "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001348573",
     scholar: "https://scholar.google.com/citations?user=Paic_C8AAAAJ&hl=es",
@@ -303,7 +303,7 @@ export const leaders = [
     credentials: "Eco. MSc. Ph.D (c)",
     role: "Líder Modelación Económica",
     hIndex: 8,
-    photo: "/team/maria-carrasquilla-sotomayor.webp",
+    photo: "/team/maria-carrasquilla-sotomayor-2026.webp",
     cvlac:
       "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0001348680",
     scholar: "https://scholar.google.com/citations?user=KmfhC5sAAAAJ&hl=es",
