@@ -4,7 +4,6 @@ import { Services } from "../src/components/sections/Services";
 import { Differentiators } from "../src/components/sections/Differentiators";
 import { History } from "../src/components/sections/History";
 import { Leaders } from "../src/components/sections/Leaders";
-import { Clients } from "../src/components/sections/Clients";
 import { QualityTeaser } from "../src/components/sections/QualityTeaser";
 import { Contact } from "../src/components/sections/Contact";
 import { OrganizationJsonLd } from "../src/components/OrganizationJsonLd";
@@ -20,7 +19,6 @@ export default function Home() {
       <Differentiators />
       <History />
       <Leaders />
-      <Clients />
       <QualityTeaser />
       <Contact />
       <WhatsAppButton />

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 
 type SectionHeaderProps = {
-  eyebrow: string;
+  /** Antetítulo. Opcional: se omite cuando el titular ya lo dice («Quiénes somos», «Nuestros servicios»). */
+  eyebrow?: string;
   title: ReactNode;
   lead?: string;
   align?: "left" | "center";
@@ -22,8 +23,8 @@ export function SectionHeader({
 
   return (
     <div className={centered ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
-      <p className="eyebrow">{eyebrow}</p>
-      <h2 className="display mt-5 text-[2rem] sm:text-[2.5rem] lg:text-[3rem]">
+      {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+      <h2 className={`display text-[2rem] sm:text-[2.5rem] lg:text-[3rem] ${eyebrow ? "mt-5" : ""}`}>
         {title}
       </h2>
       {lead ? (

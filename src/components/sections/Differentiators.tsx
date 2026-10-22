@@ -29,7 +29,7 @@ export function Differentiators() {
         <SectionHeader
           eyebrow="¿Qué nos hace diferentes?"
           title="Método, certificación y trayectoria"
-          lead="Cuatro razones por las que la industria farmacéutica y el sector público confían sus estudios a ALZAK."
+          lead="Cuatro razones por las que nuestros clientes confían en ALZAK."
         />
 
         <ol className="mt-16 grid gap-x-12 gap-y-10 sm:grid-cols-2">

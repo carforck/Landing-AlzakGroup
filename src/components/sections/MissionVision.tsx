@@ -23,10 +23,8 @@ export function MissionVision() {
       className="border-t border-hairline bg-surface-muted py-24 lg:py-32"
     >
       <div className="shell">
-        <SectionHeader
-          eyebrow="Quiénes somos"
-          title="Investigación rigurosa al servicio de decisiones informadas"
-        />
+        {/* «Quiénes somos» pasa a ser el titular, al tamaño que tenía la frase anterior. */}
+        <SectionHeader title="Quiénes somos" />
 
         <div className="mt-16 grid gap-x-12 gap-y-12 border-t border-hairline lg:grid-cols-3">
           {blocks.map((block) => (
@@ -43,19 +41,14 @@ export function MissionVision() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="text-xs font-bold tracking-[0.2em] text-ink-soft uppercase">
+        <div className="mt-14 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <span className="shrink-0 text-xs font-bold tracking-[0.2em] text-ink-soft uppercase">
             Valores corporativos
           </span>
-          <span aria-hidden className="h-px w-8 bg-hairline" />
-          {missionVision.values.map((value) => (
-            <span
-              key={value}
-              className="text-sm font-semibold text-menta-700 dark:text-menta-300"
-            >
-              {value}
-            </span>
-          ))}
+          <span aria-hidden className="hidden h-px w-8 shrink-0 bg-hairline sm:block" />
+          <p className="font-semibold leading-relaxed text-menta-700 dark:text-menta-300">
+            {missionVision.valuesStatement}
+          </p>
         </div>
       </div>
     </section>

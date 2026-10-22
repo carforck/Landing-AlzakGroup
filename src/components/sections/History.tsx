@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { history } from "../../content/site";
 import { SectionHeader } from "../SectionHeader";
-import { Timeline } from "../Timeline";
 
 /**
  * Nuestra historia: fotografía a la izquierda, relato y línea de tiempo a la
@@ -76,7 +75,7 @@ export function History() {
           </div>
 
           {/* Línea de tiempo: hairline vertical con marcas mínimas y en movimiento */}
-          <Timeline milestones={history.milestones} className="mt-12" />
+
         </div>
       </div>
     </section>

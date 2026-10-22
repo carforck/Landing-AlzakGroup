@@ -22,7 +22,7 @@ export function Leaders() {
               key={`${leader.firstName} ${leader.lastName}`}
               className="group"
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-surface-sunken">
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-surface-sunken">
                 <Image
                   src={leader.photo}
                   alt={`${leader.firstName} ${leader.lastName}`}

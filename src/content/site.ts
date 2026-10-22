@@ -32,20 +32,39 @@ export const hero = {
   title: "Aportamos valor al sistema de salud",
   subtitle:
     "Desarrollamos proyectos de consultoría e investigación en salud pública, economía de la salud y epidemiología para la toma informada de decisiones.",
-  primaryCta: { label: "Contáctenos", href: "#contacto" },
-  secondaryCta: { label: "Ver nuestros servicios", href: "#servicios" },
+  // La calculadora tiene su propia diapositiva: aquí sólo queda servicios.
+  primaryCta: { label: "Ver nuestros servicios", href: "#servicios" },
+} as const;
+
+/**
+ * Diapositiva del hero que invita a la calculadora (pedida el 2026-10-22).
+ * Va después de las tres fotografías y se queda más tiempo en pantalla.
+ */
+export const heroCalculadora = {
+  eyebrow: "Nuevo · Aplicativo CAPULMON",
+  title: "Calculadora de riesgo de cáncer de pulmón",
+  subtitle:
+    "Estime en minutos la probabilidad de desarrollar cáncer de pulmón en los próximos 6 años, con el modelo PLCOm2012 ajustado por exposición ambiental y ocupacional.",
+  primaryCta: { label: "Conocer la calculadora", href: "/calculadora-cancer-pulmon" },
+  secondaryCta: { label: "Acceder al aplicativo", href: "/acceso" },
+  /**
+   * Fondo: radiografía de tórax de Unsplash (licencia Unsplash: uso comercial
+   * gratuito, sin atribución obligatoria; se acredita igual), teñida con el
+   * azul de la marca y compuesta en panorámica en public/hero/.
+   * Original: https://unsplash.com/photos/tHS9j3HWT1s
+   */
+  // `atribucion` vacía: la licencia de Unsplash no la exige y el crédito queda aquí.
+  fondo: { src: "/hero/calculadora-fondo.webp", atribucion: "" } as null | {
+    src: string;
+    atribucion: string;
+  },
+  /** Tres datos del modelo, en una fila discreta bajo los botones. */
+  datos: ["Modelo PLCOm2012", "16 factores de riesgo", "Riesgo a 6 años"],
 } as const;
 
 /** Tira de imágenes del hero. Optimizadas a 1200×800 (3:2) en WebP. */
 export const heroImages = [
-  {
-    src: "/hero/analisis-datos.webp",
-    alt: "Gráficos y tablas de análisis sobre una mesa de trabajo",
-  },
-  {
-    src: "/hero/revision-evidencia.webp",
-    alt: "Equipo revisando indicadores de salud en una tableta",
-  },
+  // Se dejó sólo la tercera fotografía (2026-10-22); las otras dos siguen en public/hero/.
   {
     src: "/hero/equipo-trabajo.webp",
     alt: "Equipo discutiendo los resultados financieros de un proyecto",
@@ -63,9 +82,8 @@ export const stats = [
 /**
  * Presencia y alcance geográfico. Sale de la lámina 8 de la presentación
  * institucional «La importancia de ALZAK para el Sistema de Salud en Colombia»
- * (16 jul 2026): un mapa animado que va revelando, en este mismo orden, la
- * sede, las ciudades con datos de pacientes, la presencia institucional, los
- * proyectos internacionales, la colaboración en LATAM y la nueva sede.
+ * (16 jul 2026). Por decisión de Carlos (2026-10-22) el globo muestra sólo la
+ * sede principal, la colaboración en LATAM y la nueva sede, en ese orden.
  *
  * Las coordenadas son las de cada ciudad (capital del departamento cuando la
  * lámina nombra un departamento: Boyacá → Tunja, Valle del Cauca → Cali).
@@ -73,49 +91,25 @@ export const stats = [
  */
 export const presence = {
   eyebrow: "Presencia y alcance",
-  title: "Diez años generando evidencia desde Cartagena hacia la región",
-  lead: "De la sede principal a seis ciudades con datos de pacientes, presencia institucional en Colombia, proyectos en Centroamérica, colaboración en cuatro países de la región y una nueva sede en São Paulo.",
-  /**
-   * Cifras sobre el globo, de la misma presentación (láminas 2, 6 y 7). Se
-   * eligieron las de alcance; las publicaciones ya están en la tira del hero.
-   * Empiezan por dígito para que CountUp las cuente.
-   */
-  cifras: [
-    { valor: "10", etiqueta: "años generando evidencia científica en salud" },
-    { valor: "176", etiqueta: "proyectos de investigación desarrollados a 2025" },
-    { valor: "50+", etiqueta: "aliados con los que hemos colaborado" },
-    { valor: "18", etiqueta: "ciudades en 9 países, con nueva sede en São Paulo" },
-  ],
+  title: "+10 años generando evidencia para LaTam",
   categorias: [
     { clave: "sede", etiqueta: "Sede principal" },
-    { clave: "pacientes", etiqueta: "Ciudades con datos de pacientes" },
-    { clave: "institucional", etiqueta: "Presencia institucional en Colombia" },
-    { clave: "internacional", etiqueta: "Proyectos internacionales" },
-    { clave: "latam", etiqueta: "Participación y colaboración LATAM" },
+    { clave: "latam", etiqueta: "Participación y colaboración LaTam" },
     { clave: "nueva", etiqueta: "Nueva sede · São Paulo, 2026" },
   ],
   lugares: [
     { nombre: "Cartagena", detalle: "Sede principal", categoria: "sede", lat: 10.391, lon: -75.479, fase: 0 },
-    { nombre: "Barranquilla", detalle: "Datos de pacientes", categoria: "pacientes", lat: 10.964, lon: -74.796, fase: 1 },
-    { nombre: "Santa Marta", detalle: "Datos de pacientes", categoria: "pacientes", lat: 11.24, lon: -74.199, fase: 1 },
-    { nombre: "Riohacha", detalle: "La Guajira · datos de pacientes", categoria: "pacientes", lat: 11.544, lon: -72.907, fase: 1 },
-    { nombre: "Valledupar", detalle: "Datos de pacientes", categoria: "pacientes", lat: 10.463, lon: -73.253, fase: 1 },
-    { nombre: "Cúcuta", detalle: "Datos de pacientes", categoria: "pacientes", lat: 7.894, lon: -72.507, fase: 2 },
-    { nombre: "Medellín", detalle: "Datos de pacientes", categoria: "pacientes", lat: 6.244, lon: -75.581, fase: 2 },
-    { nombre: "Bogotá", detalle: "Presencia institucional", categoria: "institucional", lat: 4.711, lon: -74.072, fase: 3 },
-    { nombre: "Boyacá", detalle: "Presencia institucional", categoria: "institucional", lat: 5.535, lon: -73.367, fase: 3 },
-    { nombre: "Valle del Cauca", detalle: "Presencia institucional", categoria: "institucional", lat: 3.451, lon: -76.532, fase: 3 },
-    { nombre: "Ciudad de Guatemala", detalle: "Proyecto internacional", categoria: "internacional", lat: 14.634, lon: -90.506, fase: 4 },
-    { nombre: "Panamá", detalle: "Proyecto internacional · OPS/CLAP", categoria: "internacional", lat: 8.983, lon: -79.517, fase: 4 },
-    { nombre: "San José", detalle: "Costa Rica · proyecto internacional", categoria: "internacional", lat: 9.928, lon: -84.09, fase: 4 },
-    { nombre: "Ciudad de México", detalle: "Participantes", categoria: "latam", lat: 19.433, lon: -99.133, fase: 5 },
-    { nombre: "Quito", detalle: "Participantes", categoria: "latam", lat: -0.18, lon: -78.467, fase: 5 },
-    { nombre: "Lima", detalle: "Participantes", categoria: "latam", lat: -12.046, lon: -77.043, fase: 5 },
-    { nombre: "Buenos Aires", detalle: "Participantes", categoria: "latam", lat: -34.604, lon: -58.382, fase: 5 },
-    { nombre: "São Paulo", detalle: "Nueva sede · 2026", categoria: "nueva", lat: -23.551, lon: -46.633, fase: 6 },
+    { nombre: "Ciudad de Guatemala", detalle: "Guatemala", categoria: "latam", lat: 14.634, lon: -90.506, fase: 1 },
+    { nombre: "San José", detalle: "Costa Rica", categoria: "latam", lat: 9.928, lon: -84.09, fase: 1 },
+    { nombre: "Quito", detalle: "Ecuador", categoria: "latam", lat: -0.18, lon: -78.467, fase: 1 },
+    { nombre: "Lima", detalle: "Perú", categoria: "latam", lat: -12.046, lon: -77.043, fase: 1 },
+    { nombre: "Buenos Aires", detalle: "Argentina", categoria: "latam", lat: -34.604, lon: -58.382, fase: 1 },
+    { nombre: "Montevideo", detalle: "Uruguay", categoria: "latam", lat: -34.901, lon: -56.165, fase: 1 },
+    { nombre: "São Paulo", detalle: "Nueva sede · 2026", categoria: "nueva", lat: -23.551, lon: -46.633, fase: 2 },
   ],
   /** ISO 3166 numérico de los países con presencia, para resaltarlos en el globo. */
-  paises: ["170", "076", "484", "320", "591", "188", "218", "604", "032"],
+  // Colombia (sede), Brasil (nueva sede), Guatemala, Costa Rica, Ecuador, Perú, Argentina y Uruguay.
+  paises: ["170", "076", "320", "188", "218", "604", "032", "858"],
 } as const;
 
 export const missionVision = {
@@ -126,13 +120,15 @@ export const missionVision = {
   vision: {
     title: "Visión",
     // El deck dice "referencia nacional"; el sitio web decía "nacional y regional".
-    body: "Para 2028 ser un centro de consultoría e investigación de referencia nacional en el desarrollo de estudios en nuestras áreas de interés.",
+    body: "Para 2030 ser un centro de consultoría e investigación de referencia nacional en el desarrollo de estudios en nuestras áreas de interés.",
   },
   promise: {
     title: "Promesa de valor",
     body: "Generar insumos para la toma informada de decisiones con el más alto estándar de calidad, oportunidad y objetividad.",
   },
   values: ["Calidad", "Puntualidad", "Trabajo en equipo"],
+  valuesStatement:
+    "La calidad, la puntualidad y el trabajo en equipo, son los valores corporativos que representan a ALZAK Consulting & Research.",
 } as const;
 
 /** Lámina "¿Qué nos hace diferentes?" del deck corporativo. */
@@ -182,7 +178,7 @@ export const services = [
     title: "Costos de enfermedades y programas de salud",
     icon: "coins",
     description:
-      "Cuantificación de costos directos e indirectos asociados al manejo de patologías y a la operación de programas.",
+      "Cuantificación de costos directos e indirectos asociados al manejo de enfermedades y a la operación de programas sanitarios.",
   },
   {
     title: "Predicción de riesgo de desenlaces en salud",
@@ -244,14 +240,8 @@ export const history = {
   title: "Nuestra historia",
   paragraphs: [
     "ALZAK Consulting & Research nace en 2015 como una iniciativa de desarrollo de proyectos de consultoría e investigación en las áreas de Economía de la Salud, Salud Pública y Epidemiología.",
-    "Fue fundada por cuatro hermanos con el interés de generar insumos importantes para la toma informada de decisiones. De la mano de su padre, un científico colombiano de gran experiencia en el sector salud, han consolidado una empresa de gran proyección y reconocimiento en el mercado de consultoría e investigación en Colombia.",
+    "Fue fundada con el interés de generar insumos importantes para la toma informada de decisiones. De la mano de grandes científicos colombianos con gran experiencia en el sector salud, han consolidado una empresa de gran proyección y reconocimiento en el mercado de consultoría e investigación en Colombia.",
     "La calidad, la puntualidad y el trabajo en equipo son los valores corporativos que representan a ALZAK Consulting & Research.",
-  ],
-  milestones: [
-    { year: "2015", label: "Fundación de ALZAK Consulting & Research" },
-    { year: "2021", label: "Implementación del Sistema de Gestión de Calidad ISO 9001:2015" },
-    { year: "2021", label: "Certificación otorgada por Bureau Veritas (27 de septiembre)" },
-    { year: "2028", label: "Meta: centro de referencia nacional" },
   ],
 } as const;
 
@@ -280,7 +270,7 @@ export const leaders = [
     credentials: "MD. MSc. Ph.D",
     role: "Director científico",
     hIndex: 120,
-    photo: "/team/nelson-alvis-guzman.webp",
+    photo: "/team/nelson-alvis-guzman-2026.webp",
     cvlac:
       "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000141429",
     scholar: "https://scholar.google.com/citations?user=PkCYFaYAAAAJ&hl=es",
@@ -291,7 +281,7 @@ export const leaders = [
     credentials: "MD. Ph.D",
     role: "Asesora Clínica y Metodológica",
     hIndex: 27,
-    photo: "/team/josefina-zakzuk-sierra.webp",
+    photo: "/team/josefina-zakzuk-sierra-2026.webp",
     cvlac:
       "https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000615072",
     scholar: "https://scholar.google.com/citations?user=4lp0wsoAAAAJ&hl=es",
@@ -346,7 +336,7 @@ export const quality = {
     "ALZAK Consulting & Research es una empresa 100% colombiana que nace con el propósito de desarrollar proyectos de consultoría e investigación en las áreas de salud pública, economía de la salud y epidemiología. Cuenta con experiencia en el desarrollo de proyectos en el mercado nacional y tiene proyectado crecer a nivel internacional.",
     "La satisfacción de las necesidades y expectativas de sus clientes y demás stakeholders es uno de los pilares que fundamenta a la compañía, razón por la cual en marzo de 2021 optó por implementar su Sistema de Gestión de Calidad bajo lo establecido en la norma ISO 9001:2015. Bajo este estándar, el cual se basa en la satisfacción del cliente, la gestión del riesgo, el enfoque basado en procesos y la mejora continua, obtuvo el 27 de septiembre de 2021 la certificación de parte de Bureau Veritas para la prestación de los servicios de consultoría e investigación en salud pública, economía de la salud y epidemiología.",
     "Posterior a esto, ALZAK ha venido cumpliendo con todas las actividades requeridas en auditorías de seguimiento y recertificación, y mantiene activa su certificación de calidad.",
-    "Con esta certificación, ALZAK Consulting & Research se convierte en una de las primeras compañías que desarrolla proyectos de consultoría e investigación de la región Caribe en obtener este reconocimiento.",
+    "Con esta certificación, ALZAK Consulting & Research se convierte en una de las primeras compañías que desarrolla proyectos de consultoría e investigación de la región en obtener este reconocimiento.",
   ],
   pillars: [
     "Satisfacción del cliente",
@@ -416,7 +406,14 @@ export const contact = {
    * aquí lo elimina de los tres a la vez. El botón de WhatsApp usa `phones[0]`,
    * que sigue siendo el móvil.
    */
-  phones: ["(+57) 300-243-3252"],
+  // Desde el 2026-10-22 se publica el 318 (pie, contacto y datos estructurados).
+  phones: ["(+57) 318-945-3297"],
+  /**
+   * Número del botón flotante de WhatsApp. Va aparte de `phones` desde el
+   * 2026-10-22: Carlos pidió que WhatsApp apunte al 318, sin cambiar el
+   * teléfono que se publica en el pie y en la sección de contacto.
+   */
+  whatsapp: "(+57) 318-945-3297",
   email: "info@alzak.com.co",
   city: "Cartagena de Indias, Colombia",
   social: [
@@ -665,7 +662,8 @@ export const navigation = [
   { label: "Nosotros", href: "/#nosotros" },
   { label: "Servicios", href: "/#servicios" },
   { label: "Equipo", href: "/#lideres" },
-  { label: "Calculadora CaP", href: "/calculadora-cancer-pulmon" },
   { label: "Calidad", href: "/calidad" },
   { label: "Contáctenos", href: "/#contacto" },
+  // El último elemento es el botón destacado de la barra (ver Navigation).
+  { label: "Calculadora CaP", href: "/calculadora-cancer-pulmon" },
 ] as const;

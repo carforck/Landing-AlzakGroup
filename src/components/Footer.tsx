@@ -88,20 +88,6 @@ export function Footer() {
             </li>
           </ul>
 
-          <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-            {contact.social.map((s) => (
-              <li key={s.network}>
-                <a
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link-underline transition-colors duration-200 hover:text-menta-300"
-                >
-                  {s.network}
-                </a>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 

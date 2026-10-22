@@ -80,7 +80,7 @@ export function MotifField({ className = "" }: { className?: string }) {
   const [visible, setVisible] = useState(false);
 
   // Fuera de pantalla las columnas quedan en pausa: cintas infinitas corriendo
-  // donde nadie las ve son gasto de batería, igual que en HeroBackdrop.
+  // donde nadie las ve son gasto de batería, igual que en HeroCarrusel.
   useEffect(() => {
     const node = ref.current;
     if (!node) return;

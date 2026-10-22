@@ -1,4 +1,4 @@
-import { clients, contact, leaders, services, site, stats } from "../content/site";
+import { contact, leaders, services, site, stats } from "../content/site";
 
 /**
  * Datos estructurados schema.org. Ayudan a que los buscadores entiendan qué es
@@ -26,7 +26,6 @@ export function OrganizationJsonLd() {
       addressRegion: "Bolívar",
       addressCountry: "CO",
     },
-    sameAs: contact.social.map((s) => s.href),
     hasCredential: {
       "@type": "EducationalOccupationalCredential",
       name: "ISO 9001:2015",
@@ -55,7 +54,6 @@ export function OrganizationJsonLd() {
       },
     })),
     // Clientes declarados en el material corporativo de la compañía.
-    client: clients.map((c) => ({ "@type": "Organization", name: c.name })),
     ...(publications
       ? {
           subjectOf: {

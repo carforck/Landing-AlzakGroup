@@ -107,11 +107,12 @@ export function Navigation() {
             </Link>
           ) : null}
 
+          {/* Botón destacado: el último elemento de `navigation` (Calculadora CaP). */}
           <Link
-            href="#contacto"
+            href={navigation[navigation.length - 1].href}
             className="btn btn-primary hidden lg:inline-flex"
           >
-            Contáctenos
+            {navigation[navigation.length - 1].label}
           </Link>
 
           <button

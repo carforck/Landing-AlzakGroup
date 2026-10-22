@@ -17,9 +17,8 @@ import { presence } from "../content/site";
  *  - No da vueltas completas. Toda la presencia está en América; un giro de
  *    360° la escondería la mitad del tiempo. Entra rotando desde el Atlántico,
  *    se detiene sobre la región y luego oscila suave. Se puede arrastrar.
- *  - Los puntos aparecen en el orden de la lámina 8 de la presentación
- *    institucional (sede → pacientes → institucional → internacional → LATAM
- *    → nueva sede), con un pulso y un arco desde Cartagena.
+ *  - Los puntos aparecen en orden (sede → colaboración LATAM → nueva sede),
+ *    con un pulso y un arco desde Cartagena.
  *
  * Se pausa fuera de pantalla y con «reducir movimiento» queda quieto, con
  * todos los puntos ya visibles.
@@ -43,10 +42,7 @@ const COLOR = {
 
 export const COLOR_CATEGORIA: Record<Categoria, string> = {
   sede: COLOR.sede,
-  pacientes: "#2a7085",
-  institucional: "#2f8ba3",
-  internacional: "#3a3736",
-  latam: "#54504f",
+  latam: "#3a3736",
   nueva: COLOR.nueva,
 };
 
@@ -191,7 +187,7 @@ export function PresenceGlobe({ resaltada }: { resaltada: Categoria | null }) {
       // Arcos desde Cartagena a los puntos fuera de Colombia.
       const sede = presence.lugares[0];
       for (const l of presence.lugares) {
-        if (l.fase < 4) continue;
+        if (l.categoria === "sede") continue;
         const f = fase(l.fase);
         if (!f) continue;
         const interp = geoInterpolate([sede.lon, sede.lat], [l.lon, l.lat]);

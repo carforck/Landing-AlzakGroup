@@ -7,23 +7,17 @@ import { ARTE } from "./ServiceArt";
 /**
  * Las doce líneas de trabajo en una cuadrícula bento.
  *
- * Tamaños distintos para que el ojo tenga dónde empezar: la línea insignia
- * (evaluaciones económicas) ocupa 2 × 2, y otras cinco van a lo ancho. El
- * orden de `services` no cambia; `grid-flow-dense` rellena los huecos.
+ * Doce tarjetas del mismo tamaño en filas de cuatro (pedido de Carlos,
+ * 2026-10-22): tres filas en escritorio, dos columnas en tableta y una en
+ * móvil.
  *
  * Cada tarjeta trae su ilustración animada (ServiceArt), una luz que sigue al
  * cursor y una inclinación leve en 3D. Las animaciones arrancan cuando la
  * cuadrícula entra en pantalla. Con «reducir movimiento» no hay inclinación ni
  * animación: las ilustraciones se ven en su estado final.
  */
-const TAMANO: Record<string, string> = {
-  scale: "md:col-span-2 lg:row-span-2",
-  trending: "md:col-span-2",
-  lineChart: "md:col-span-2",
-  route: "lg:col-span-2",
-  gauge: "md:col-span-2",
-  graduation: "md:col-span-2",
-};
+/** Todas iguales: ninguna tarjeta ocupa dos columnas. */
+const TAMANO: Record<string, string> = {};
 
 export function ServicesBento() {
   const rejilla = useRef<HTMLUListElement>(null);
@@ -39,11 +33,12 @@ export function ServicesBento() {
     <ul
       ref={rejilla}
       data-visto={visto ? "si" : "no"}
-      className="bento mt-14 grid grid-flow-dense auto-rows-[minmax(15rem,auto)] gap-4 md:grid-cols-2 lg:grid-cols-4"
+      className="bento mt-14 grid auto-rows-[minmax(15rem,auto)] gap-4 md:grid-cols-2 lg:grid-cols-4"
     >
       {services.map((s, i) => {
         const Arte = ARTE[s.icon];
-        const grande = s.icon === "scale";
+        // Ya no hay tarjeta 2 × 2: todas tienen la altura de una fila.
+        const grande = false;
         // Las anchas van en horizontal: texto a la izquierda, ilustración grande
         // a la derecha. Con la ilustración arriba quedaba medio hueco vacío.
         const ancha = !grande && (TAMANO[s.icon] ?? "").includes("col-span-2");

@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { contact } from "../content/site";
 
 /** Primer teléfono de contacto, en formato E.164 sin signos. */
-const WHATSAPP_NUMBER = contact.phones[0].replace(/[^\d]/g, "");
+const WHATSAPP_NUMBER = contact.whatsapp.replace(/[^\d]/g, "");
 const WHATSAPP_MESSAGE =
   "Hola ALZAK, me gustaría recibir información sobre sus servicios de consultoría e investigación en salud.";
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(

@@ -38,7 +38,7 @@ export function QualityTeaser() {
 
           <p className="mt-6 max-w-xl leading-relaxed text-gris-800">
             Una de las primeras compañías de consultoría e investigación de la región
-            Caribe en obtener este reconocimiento, vigente desde el 27 de septiembre de
+            en obtener este reconocimiento, vigente desde el 27 de septiembre de
             2021 y mantenido mediante auditorías de seguimiento y recertificación.
           </p>
 
